@@ -1,4 +1,5 @@
 <?php
+require_once './Aluno.php';
 /*
  * Professor.php
  */

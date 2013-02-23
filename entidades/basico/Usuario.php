@@ -1,10 +1,11 @@
 <?php
-
+require_once '../Entidade.php';
+require_once '../Pesquisavel.php';
 /**
  * Classe básica de definicao de usuário
  * @author Luis
  */
-abstract class Usuario implements Entidade{
+abstract class Usuario implements Entidade, Pesquisavel{
 
     /**
      * @var integer
@@ -128,6 +129,40 @@ abstract class Usuario implements Entidade{
     }
 
     public abstract function getType();
+    
+    /**
+     * @return string
+     */
+    public function getBreveDescricao() {
+        return "";
+    }
+    
+    /**
+     * @return string
+     */
+    public function getLink() {
+        return "";
+    }
+    
+    /**
+     * @return string
+     */
+    public function getPalavrasChave() {
+        return "";
+    }
+    
+    /**
+     * @return string
+     */
+    public function getTipo() {
+        return "";
+    }
+    
+    /**
+     * @return string
+     */
+    public function getTitulo() {
+        return "";
+    }
 }
-
 ?>
