@@ -6,7 +6,6 @@ require_once '../entidades/Entidade.php';
  */
 
 /**
- *
  * @author Luis
  * @since Feb 23, 2013
  */
