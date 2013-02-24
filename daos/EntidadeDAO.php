@@ -1,5 +1,5 @@
 <?php
-require_once '../entidades/Entidade.php';
+require_once 'ftbp-src/entidades/Entidade.php';
 
 /*
  * EntidadeDAO.php
@@ -11,9 +11,9 @@ require_once '../entidades/Entidade.php';
  */
 
 interface EntidadeDAO {
-    function executeInsert(Entidade $entidade);
-    function executeUpdate(Entidade $entidade);
-    function executeDelete(Entidade $entidade);
+    function executarInsert(Entidade $entidade);
+    function executarUpdate(Entidade $entidade);
+    function executarDelete(Entidade $entidade);
 }
 
 ?>

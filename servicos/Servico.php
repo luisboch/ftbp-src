@@ -1,5 +1,5 @@
 <?php
-require_once '../entidades/Entidade.php';
+require_once 'ftbp-src/entidades/Entidade.php';
 /*
  * Servico.php
  */
@@ -9,10 +9,11 @@ require_once '../entidades/Entidade.php';
  * @since Feb 23, 2013
  */
 interface EntidadeServico {
-    function salvar(Entidade $entidade);
+    function inserir(Entidade $entidade);
     function atualizar(Entidade $entidade);
     function remover(Entidade $entidade);
     function checarAcesso();
+    function validar(Entidade $entidade);
 }
 
 ?>

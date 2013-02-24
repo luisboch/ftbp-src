@@ -1,6 +1,6 @@
 <?php
-require_once '../Entidade.php';
-require_once '../Pesquisavel.php';
+require_once 'ftbp-src/entidades/Entidade.php';
+require_once 'ftbp-src/entidades/Pesquisavel.php';
 /**
  * Classe básica de definicao de usuário
  * @author Luis
@@ -155,7 +155,7 @@ abstract class Usuario implements Entidade, Pesquisavel{
      * @return string
      */
     public function getTipo() {
-        return "";
+        return get_class($this);
     }
     
     /**
