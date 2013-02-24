@@ -70,6 +70,48 @@ class UsuarioDAO extends DAOBasico{
         
         
     }
+    
+    /**
+     * 
+     * @param string $email
+     * @param string $senha
+     * @return Aluno
+     * @throws NoResultException
+     */
+    public function login($email, $senha) {
+        
+        $sql = "select *  
+                 from usuarios
+                where senha = $1 and email = $2";
+        
+        
+        
+        $p = $this->getConn()->prepare($sql);
+        $p->setParameter(1, hash("sha512", $senha), PreparedStatement::STRING);
+        $p->setParameter(2, $email, PreparedStatement::STRING);
+        
+        $rs = $p->getResult();
+        if(!$rs->next()){
+            throw new NoResultException("Usuário não encontrado");
+        }
+        
+        return $this->montarAluno($rs);
+        
+    }
+    
+    /**
+     * 
+     * @param ResultSet $rs
+     * @return Aluno
+     */
+    private function montarAluno(ResultSet $rs){
+        $arr = $rs->fetchArray();
+        $u = new Aluno();
+        $u->setEmail($arr['email']);
+        $u->setNome($arr['nome']);
+        $u->setId($arr['id']);
+        return $u;
+    }
 
 }
 

@@ -32,6 +32,22 @@ class ServicoUsuario extends ServicoBasico {
     public function validarAluno(Aluno $aluno){
         
     }
+    
+    public function login($email, $senha){
+         $v  = new ValidacaoExecao();
+        if($email == null){
+            $v->addError("Email inválido");
+        }
+        if($senha == null){
+            $v->addError("Senha inválida");
+        }
+        
+        if(!$v->isEmtpy()){
+            throw $v;
+        }
+        
+        return $this->usuarioDAO->login($email, $senha);
+    }
 }
 
 ?>

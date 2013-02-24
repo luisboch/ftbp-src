@@ -1,7 +1,7 @@
 <?php
 
 /*
- * ExeceaoValidacao.php
+ * ValidacaoExecao.php
  */
 
 /**
