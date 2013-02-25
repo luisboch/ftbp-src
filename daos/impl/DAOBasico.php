@@ -46,6 +46,7 @@ abstract class DAOBasico implements EntidadeDAO{
         }
         $this->connect();
     }
+    
 }
 
 ?>

@@ -14,6 +14,7 @@ interface EntidadeDAO {
     function executarInsert(Entidade $entidade);
     function executarUpdate(Entidade $entidade);
     function executarDelete(Entidade $entidade);
+    function getById($id);
 }
 
 ?>

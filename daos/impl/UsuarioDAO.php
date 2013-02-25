@@ -17,9 +17,6 @@ require_once 'ftbp-src/entidades/basico/Professor.php';
  */
 class UsuarioDAO extends DAOBasico{
 
-    public function executeDelete(Entidade $entidade) {
-        
-    }
     /**
      * @param Usuario $entidade
      * @throws Exception
@@ -133,6 +130,27 @@ class UsuarioDAO extends DAOBasico{
         $u->setNome($arr['nome']);
         $u->setId($arr['id']);
         return $u;
+    }
+    
+    /**
+     * @param integer $id
+     * @return Aluno
+     * @throws NoResultException
+     */
+    public function getById($id) {
+        $sql = "select *  
+                 from usuarios
+                where id = $1";
+        
+        $p = $this->getConn()->prepare($sql);
+        $p->setParameter(1, $id, PreparedStatement::INTEGER);
+        $rs = $p->getResult();
+        
+        if(!$rs->next()){
+            throw new NoResultException("Usuário não encontrado");
+        }
+        
+        return $this->montarAluno($rs);
     }
 
 }
