@@ -34,7 +34,12 @@ class UsuarioDAO extends DAOBasico{
     }
 
     public function executarUpdate(Entidade $entidade) {
-        
+        if ($entidade->getTipo() == 'Aluno') {
+            $this->atualizarAluno($entidade);
+        } else {
+            throw new 
+            Exception("Não foram implementadas outras formas para gravar usuário");
+        }
     }
 
     public function executarDelete(Entidade $entidade) {
@@ -70,6 +75,25 @@ class UsuarioDAO extends DAOBasico{
         
         
     }
+    private function atualizarAluno(Aluno $aluno) {
+        
+        $sql = "UPDATE usuarios(
+                   SET nome     = $1,
+                       email    = $2,
+                       senha    = $3,
+                       grupo_id = NULL)
+                 WHERE id = $4";
+        
+        $p = $this->getConn()->prepare($sql);
+        
+        $p->setParameter(1, $aluno->getNome(), PreparedStatement::STRING);
+        $p->setParameter(2, $aluno->getEmail(), PreparedStatement::STRING);
+        $p->setParameter(3, hash("sha512", $aluno->getSenha()), PreparedStatement::STRING);
+        $p->setParameter(4, $aluno->getId(), PreparedStatement::INTEGER);
+        
+        $p->execute();
+        
+    }
     
     /**
      * 
@@ -83,8 +107,6 @@ class UsuarioDAO extends DAOBasico{
         $sql = "select *  
                  from usuarios
                 where senha = $1 and email = $2";
-        
-        
         
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, hash("sha512", $senha), PreparedStatement::STRING);

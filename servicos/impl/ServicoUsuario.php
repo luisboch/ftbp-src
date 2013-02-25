@@ -34,7 +34,7 @@ class ServicoUsuario extends ServicoBasico {
     }
     
     public function login($email, $senha){
-         $v  = new ValidacaoExecao();
+        $v  = new ValidacaoExecao();
         if($email == null){
             $v->addError("Email inválido");
         }
