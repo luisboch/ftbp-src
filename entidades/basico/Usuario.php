@@ -5,7 +5,8 @@ require_once 'ftbp-src/entidades/Pesquisavel.php';
  * Classe básica de definicao de usuário
  * @author Luis
  */
-abstract class Usuario implements Entidade, Pesquisavel{
+
+class Usuario implements Entidade, Pesquisavel{
 
     /**
      * @var integer
@@ -37,6 +38,21 @@ abstract class Usuario implements Entidade, Pesquisavel{
      */
     private $dataCriacao;
     
+    /**
+     * @var Departamento
+     */
+    private $departamento;
+    
+    /**
+     * @var boolean
+     */
+    private $responsavel;
+    
+    /**
+     *
+     * @var integer
+     */
+    private $tipoUsuario;
     /**
      * @return integer
      */
@@ -127,28 +143,29 @@ abstract class Usuario implements Entidade, Pesquisavel{
     public function setDataCriacao(DateTime $dataCriacao) {
         $this->dataCriacao = $dataCriacao;
     }
-
-    public abstract function getType();
     
     /**
      * @return string
      */
     public function getBreveDescricao() {
-        return "";
+        return 'Usuário registrado em: '.$this->dataCriacao->format('d/M/y');
     }
     
     /**
      * @return string
      */
     public function getLink() {
-        return "";
+        return "UsuariosController/registro/".$this->id;
     }
     
     /**
-     * @return string
+     * @return array<string>
      */
     public function getPalavrasChave() {
-        return "";
+        $palavras = explode(' ', $this->nome);
+        $palavras[] = $this->email;
+        $palavras[] = $this->id;
+        return $palavras;
     }
     
     /**
@@ -162,7 +179,51 @@ abstract class Usuario implements Entidade, Pesquisavel{
      * @return string
      */
     public function getTitulo() {
-        return "";
+        return $this->nome . ' [ '.$this->email.' ]';
+    }
+    
+    /**
+     * 
+     * @return Departamento
+     */
+    public function getDepartamento() {
+        return $this->departamento;
+    }
+
+    /**
+     * @param Departamento $departamento
+     */
+    public function setDepartamento(Departamento $departamento) {
+        $this->departamento = $departamento;
+    }
+    /**
+     * 
+     * @return boolean 
+     */
+    public function getResponsavel() {
+        return $this->responsavel;
+    }
+    /**
+     * 
+     * @param boolean $responsavel
+     */
+    public function setResponsavel($responsavel) {
+        $this->responsavel = $responsavel;
+    }
+    
+    /**
+     * @return integer
+     */
+    public function getTipoUsuario() {
+        return $this->tipoUsuario;
+    }
+    /**
+     * 
+     * @param integer $tipoUsuario
+     */
+    public function setTipoUsuario($tipoUsuario) {
+        $this->tipoUsuario = $tipoUsuario;
     }
 }
+
 ?>

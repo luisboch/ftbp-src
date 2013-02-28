@@ -2,9 +2,6 @@
 
 require_once 'ftbp-src/daos/EntidadeDAO.php';
 require_once 'DAOBasico.php';
-require_once 'ftbp-src/entidades/basico/Aluno.php';
-require_once 'ftbp-src/entidades/basico/Funcionario.php';
-require_once 'ftbp-src/entidades/basico/Professor.php';
 /*
  * UsuarioDAO.php
  */
@@ -22,53 +19,32 @@ class UsuarioDAO extends DAOBasico {
      * @throws Exception
      */
     public function executarInsert(Entidade $entidade) {
-        if ($entidade->getTipo() == 'Aluno') {
-            $this->inserirAluno($entidade);
-        } else {
-            throw new
-            Exception("Não foram implementadas outras formas para gravar usuário");
-        }
-    }
-
-    public function executarUpdate(Entidade $entidade) {
-        if ($entidade->getTipo() == 'Aluno') {
-            $this->atualizarAluno($entidade);
-        } else {
-            throw new
-            Exception("Não foram implementadas outras formas para gravar usuário");
-        }
-    }
-
-    public function executarDelete(Entidade $entidade) {
-
-        $sql = " delete from      
-                      usuarios where id=$1";
-
-        $p = $this->getConn()->prepare($sql);
-
-        $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
-
-        $p->execute();
-    }
-
-    private function inserirAluno(Aluno $aluno) {
-
+        
         $sql = "INSERT 
                  INTO usuarios(
                       nome,
                       email,
                       senha,
-                      data_criacao,
-                      grupo_id)
-               VALUES ($1, $2, $3, now(), NULL)";
+                      departamento_id,
+                      reponsavel,
+                      tipo_usuario)
+               VALUES ($1, $2, $3, $4, $5, $6)";
 
 
         $p = $this->getConn()->prepare($sql);
 
-        $p->setParameter(1, $aluno->getNome(), PreparedStatement::STRING);
-        $p->setParameter(2, $aluno->getEmail(), PreparedStatement::STRING);
-        $p->setParameter(3, hash("sha512", $aluno->getSenha()), PreparedStatement::STRING);
-
+        $p->setParameter(1, $$entidade->getNome(), PreparedStatement::STRING);
+        $p->setParameter(2, $$entidade->getEmail(), PreparedStatement::STRING);
+        $p->setParameter(3, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
+        
+        if($entidade->getDepartamento() === NULL){
+            throw new IllegalStateException('Campo departamento está nulo, não permitido no BD');
+        }
+        
+        $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getResponsavel(), PreparedStatement::BOOLEAN);
+        $p->setParameter(6, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
+        
         $p->execute();
 
         // Pega o id gerado na sequence 
@@ -76,25 +52,44 @@ class UsuarioDAO extends DAOBasico {
         $p->next();
         $array = $p->fetchArray();
 
-        $aluno->setId($array['id']);
+        $$entidade->setId($array['id']);
     }
 
-    private function atualizarAluno(Aluno $aluno) {
-
+    public function executarUpdate(Entidade $entidade) {
+        
         $sql = "UPDATE usuarios(
-                   SET nome     = $1,
-                       email    = $2,
-                       senha    = $3,
-                       grupo_id = NULL)
-                 WHERE id = $4";
-
+                   SET nome            = $1,
+                       email           = $2,
+                       senha           = $3,
+                       departamento_id = $4,
+                       responsável     = $5,
+                       tipo_usuario    = $6)
+                 WHERE id = $7";
+        
+        if($entidade->getDepartamento() === NULL){
+            throw new IllegalStateException('Campo departamento está nulo, não permitido no BD');
+        }
+        
         $p = $this->getConn()->prepare($sql);
 
-        $p->setParameter(1, $aluno->getNome(), PreparedStatement::STRING);
-        $p->setParameter(2, $aluno->getEmail(), PreparedStatement::STRING);
-        $p->setParameter(3, hash("sha512", $aluno->getSenha()), PreparedStatement::STRING);
-        $p->setParameter(4, $aluno->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getEmail(), PreparedStatement::STRING);
+        $p->setParameter(3, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
+        
+        $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getResponsavel(), PreparedStatement::BOOLEAN);
+        $p->setParameter(6, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
+        
+        $p->setParameter(7, $entidade->getId(), PreparedStatement::INTEGER);
 
+        $p->execute();
+    }
+
+    public function executarDelete(Entidade $entidade) {
+        $sql = " delete from      
+                      usuarios where id=$1";
+        $p = $this->getConn()->prepare($sql);
+        $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->execute();
     }
 
@@ -120,20 +115,25 @@ class UsuarioDAO extends DAOBasico {
             throw new NoResultException("Usuário não encontrado");
         }
 
-        return $this->montarAluno($rs);
+        return $this->montarUsuario($rs);
     }
 
     /**
      * 
      * @param ResultSet $rs
-     * @return Aluno
+     * @return Usuario
      */
-    private function montarAluno(ResultSet $rs) {
+    private function montarUsuario(ResultSet $rs) {
         $arr = $rs->fetchArray();
-        $u = new Aluno();
+        
+        $u = new UsuarioLazy($this);
         $u->setEmail($arr['email']);
         $u->setNome($arr['nome']);
         $u->setId($arr['id']);
+        //$u->setDataCriacao($dataCriacao)
+        $u->setResponsavel($arr['responsavel']);
+        $u->setTipoUsuario($arr['tipo_usuario']);
+        
         return $u;
     }
 
@@ -155,9 +155,37 @@ class UsuarioDAO extends DAOBasico {
             throw new NoResultException("Usuário não encontrado");
         }
 
-        return $this->montarAluno($rs);
+        return $this->montarUsuario($rs);
     }
-
+    
+    /**
+     * Carrega o usuário com o departamento relacionado.
+     * @param Usuario $usuario
+     * @throws NoResultException quanto não encontra o Departamento.
+     */
+    public function carregarDepartamentoUsuario(Usuario $usuario){
+        $sql = "select * 
+                  from departamento 
+                 where id = $1";
+        $p = $this->getConn()->prepare($sql);
+        $p->setParameter(1, $usuario->getDepartamento()->getId(), PreparedStatement::INTEGER);
+        
+        $rs = $p->getResult();
+        
+        if(!$rs->next()){
+            throw new NoResultException(
+                    "Departamento com o id ".$usuario->getDepartamento()->getId(). " não encontrando");
+        }
+        
+        $arr = $rs->fetchArray();
+        $dp = new Departamento();
+        $dp->setId($arr['id']);
+        // $dp->setDataCriacao($dataCriacao)
+        $dp->setNome($arr['nome']);
+        
+        $usuario->setDepartamento($dp);
+        
+    }
 }
 
 ?>

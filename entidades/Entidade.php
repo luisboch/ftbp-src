@@ -10,14 +10,21 @@
  * @since Feb 23, 2013
  */
 interface Entidade {
+    
     /**
      * @return integer
      */
     function getId();
+    
     /**
      * @return DateTime
      */
     function getDataCriacao();
+    
+    /**
+     * @param integer $id
+     */
+    function setId($id);
 }
 
 ?>
