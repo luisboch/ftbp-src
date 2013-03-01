@@ -74,6 +74,14 @@ abstract class ServicoBasico implements EntidadeServico {
             throw $e;
         }
     }
+    /**
+     * 
+     * @param integer $id
+     * @return Entidade
+     */
+    public function getById($id){
+        return $this->dao->getById($id);
+    }
 
 }
 

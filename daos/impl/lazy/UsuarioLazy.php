@@ -23,6 +23,8 @@ class UsuarioLazy extends Usuario{
      */
     private $dpCarregado = false;
     
+    private $departamentoId;
+    
     function __construct(UsuarioDAO $dao) {
         $this->dao = $dao;
     }
@@ -33,7 +35,7 @@ class UsuarioLazy extends Usuario{
      */
     public function getDepartamento() {
         if(!$this->dpCarregado){
-            $this->dao->carregarDepartamentoUsuario($this);
+            $this->dao->carregarDepartamentoUsuario($this, $this->departamentoId);
         }
         return parent::getDepartamento();
     }
@@ -45,6 +47,17 @@ class UsuarioLazy extends Usuario{
     public function setDepartamento(Departamento $departamento) {
         parent::setDepartamento($departamento);
         $this->dpCarregado = true;
+    }
+    
+    public function getDepartamentoId() {
+        return $this->departamentoId;
+    }
+
+    public function setDepartamentoId($departamentoId) {
+        if($departamentoId == null){
+            $this->dpCarregado = true;
+        }
+        $this->departamentoId = $departamentoId;
     }
 }
 

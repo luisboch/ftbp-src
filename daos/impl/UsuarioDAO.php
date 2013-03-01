@@ -2,6 +2,9 @@
 
 require_once 'ftbp-src/daos/EntidadeDAO.php';
 require_once 'DAOBasico.php';
+require_once 'ftbp-src/daos/impl/DAOUtil.php';
+require_once 'ftbp-src/daos/impl/lazy/UsuarioLazy.php';
+require_once 'ftbp-src/entidades/basico/Usuario.php';
 /*
  * UsuarioDAO.php
  */
@@ -26,24 +29,24 @@ class UsuarioDAO extends DAOBasico {
                       email,
                       senha,
                       departamento_id,
-                      reponsavel,
+                      responsavel,
                       tipo_usuario)
-               VALUES ($1, $2, $3, $4, $5, $6)";
+               VALUES ($1, $2, $3, $4, ".( $entidade->getResponsavel()?'true':'false').", $5)";
 
 
         $p = $this->getConn()->prepare($sql);
 
-        $p->setParameter(1, $$entidade->getNome(), PreparedStatement::STRING);
-        $p->setParameter(2, $$entidade->getEmail(), PreparedStatement::STRING);
+        $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getEmail(), PreparedStatement::STRING);
         $p->setParameter(3, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
         
-        if($entidade->getDepartamento() === NULL){
-            throw new IllegalStateException('Campo departamento está nulo, não permitido no BD');
+        if($entidade->getDepartamento() ==  NULL){
+            $p->setParameter(4, NULL, PreparedStatement::INTEGER);
+        } else{
+            $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
         }
         
-        $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(5, $entidade->getResponsavel(), PreparedStatement::BOOLEAN);
-        $p->setParameter(6, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
         
         $p->execute();
 
@@ -52,23 +55,19 @@ class UsuarioDAO extends DAOBasico {
         $p->next();
         $array = $p->fetchArray();
 
-        $$entidade->setId($array['id']);
+        $entidade->setId($array['id']);
     }
 
     public function executarUpdate(Entidade $entidade) {
         
-        $sql = "UPDATE usuarios(
+        $sql = "UPDATE usuarios
                    SET nome            = $1,
                        email           = $2,
                        senha           = $3,
                        departamento_id = $4,
-                       responsável     = $5,
-                       tipo_usuario    = $6)
-                 WHERE id = $7";
-        
-        if($entidade->getDepartamento() === NULL){
-            throw new IllegalStateException('Campo departamento está nulo, não permitido no BD');
-        }
+                       responsável     = ".( $entidade->getResponsavel()?'true':'false').",
+                       tipo_usuario    = $5
+                 WHERE id = $6";
         
         $p = $this->getConn()->prepare($sql);
 
@@ -76,11 +75,15 @@ class UsuarioDAO extends DAOBasico {
         $p->setParameter(2, $entidade->getEmail(), PreparedStatement::STRING);
         $p->setParameter(3, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
         
-        $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(5, $entidade->getResponsavel(), PreparedStatement::BOOLEAN);
-        $p->setParameter(6, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
+        if($entidade->getDepartamento() ==  NULL){
+            $p->setParameter(4, NULL, PreparedStatement::INTEGER);
+        } else{
+            $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
+        }
         
-        $p->setParameter(7, $entidade->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
+        
+        $p->setParameter(6, $entidade->getId(), PreparedStatement::INTEGER);
 
         $p->execute();
     }
@@ -130,9 +133,10 @@ class UsuarioDAO extends DAOBasico {
         $u->setEmail($arr['email']);
         $u->setNome($arr['nome']);
         $u->setId($arr['id']);
-        //$u->setDataCriacao($dataCriacao)
+        $u->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
         $u->setResponsavel($arr['responsavel']);
         $u->setTipoUsuario($arr['tipo_usuario']);
+        $u->setDepartamentoId($arr['departamento_id']);
         
         return $u;
     }
@@ -163,7 +167,7 @@ class UsuarioDAO extends DAOBasico {
      * @param Usuario $usuario
      * @throws NoResultException quanto não encontra o Departamento.
      */
-    public function carregarDepartamentoUsuario(Usuario $usuario){
+    public function carregarDepartamentoUsuario(Usuario $usuario, $dpartamentId){
         $sql = "select * 
                   from departamento 
                  where id = $1";
@@ -180,7 +184,7 @@ class UsuarioDAO extends DAOBasico {
         $arr = $rs->fetchArray();
         $dp = new Departamento();
         $dp->setId($arr['id']);
-        // $dp->setDataCriacao($dataCriacao)
+        $dp->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
         $dp->setNome($arr['nome']);
         
         $usuario->setDepartamento($dp);

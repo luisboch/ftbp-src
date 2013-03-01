@@ -1,6 +1,8 @@
 <?php
 require_once 'ftbp-src/entidades/Entidade.php';
 require_once 'ftbp-src/entidades/Pesquisavel.php';
+require_once 'ftbp-src/entidades/basico/TipoUsuario.php';
+require_once 'ftbp-src/entidades/basico/Departamento.php';
 /**
  * Classe básica de definicao de usuário
  * @author Luis
@@ -46,7 +48,7 @@ class Usuario implements Entidade, Pesquisavel{
     /**
      * @var boolean
      */
-    private $responsavel;
+    private $responsavel = false;
     
     /**
      *
