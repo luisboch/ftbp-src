@@ -172,13 +172,13 @@ class UsuarioDAO extends DAOBasico {
                   from departamento 
                  where id = $1";
         $p = $this->getConn()->prepare($sql);
-        $p->setParameter(1, $usuario->getDepartamento()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(1, $dpartamentId, PreparedStatement::INTEGER);
         
         $rs = $p->getResult();
         
         if(!$rs->next()){
             throw new NoResultException(
-                    "Departamento com o id ".$usuario->getDepartamento()->getId(). " não encontrando");
+                    "Departamento com o id ".$dpartamentId. " não encontrando");
         }
         
         $arr = $rs->fetchArray();

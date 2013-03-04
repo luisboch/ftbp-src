@@ -226,6 +226,13 @@ class Usuario implements Entidade, Pesquisavel{
     public function setTipoUsuario($tipoUsuario) {
         $this->tipoUsuario = $tipoUsuario;
     }
+    /**
+     * 
+     * @return Usuario
+     */
+    public function getEntidade() {
+        return $this;
+    }
 }
 
 ?>

@@ -8,7 +8,7 @@
  * @author Luis
  * @since Feb 23, 2013
  */
-interface Pesquisavel extends Entidade{
+interface Pesquisavel{
     
     /**
      * @return string
@@ -34,6 +34,11 @@ interface Pesquisavel extends Entidade{
      * @return string
      */
     function getTipo();
+    
+    /**
+     * @return Entidade 
+     */
+    function getEntidade();
     
 }
 
