@@ -153,42 +153,42 @@ class PesquisaDAO extends DAOBasico {
      */
     public function search($string = ""){
         
+        // Prepara a querie levando em consideração apenas a tabela principal
         $sql = "select distinct p.* 
                   from pesquisa p ";
         $palavras = explode(' ', $string);
-        $params = array();
         
+        // Adicioa joins para a tabela de palavras, registrando quais 
+        // os parãmetros que devem ser setados
+        
+        $params = array();
         $i = 0;
         foreach ($palavras as $p) {
             $sql .= "join palavras_chave on (pesquisa_id = p.id and lower(palavra) like lower($".($i).") ";
             $i++;
             $params[] = $p;
         }
-        
         $pr = $this->getConn()->prepare($sql);
         
+        // Seta todos os parãmetros.
         for($y =0; $y < count($params); $y++){
             $pr->setParameter($y, $params[$y], PreparedStatement::STRING);
         }
         
         $rs = $pr->getResult();
         
+        // Monta a lista de resultados
         $list = array();
-        
         while($rs->next()){
             $arr = $rs->fetchArray();
-            /**id,
-                       tipo,
-                       entidade_id,
-                       titulo, 
-                       descricao, 
-                       link
-             * 
-             */
-            $entidade = new Pesquisa($arr['descricao'], $arr['entidade_id'], $arr['link'], $arr['titulo'], $arr['tipo']);
+            
+            $entidade = 
+                    new Pesquisa($arr['descricao'], $arr['entidade_id'],
+                            $arr['link'], $arr['titulo'], $arr['tipo']);
             $list[] = $entidade;
         }
         
+        // Retorna
         return $list;
     }
 }
