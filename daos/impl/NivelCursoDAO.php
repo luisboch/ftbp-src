@@ -9,7 +9,7 @@ class NivelCursoDAO extends DAOBasico {
     public function executarInsert(Entidade $entidade) {
         
         $sql = "INSERT    
-                 INTO nivelCurso(
+                 INTO nivel_curso(
                                    nome
                  VALUES           ($1)";
 
@@ -20,7 +20,7 @@ class NivelCursoDAO extends DAOBasico {
         $p->execute();
 
         // Pega o id gerado na sequence 
-        $p = $this->getConn()->query("select currval('nivelCurso_id_seq') as id");
+        $p = $this->getConn()->query("select currval('nivel_curso_id_seq') as id");
         $p->next();
         $array = $p->fetchArray();
 
@@ -29,7 +29,7 @@ class NivelCursoDAO extends DAOBasico {
 
     public function executarUpdate(Entidade $entidade) {
         
-        $sql = "UPDATE nivelCurso
+        $sql = "UPDATE nivel_curso
                    SET nome = $1
                    WHERE id =$2";                                 
               
@@ -43,7 +43,7 @@ class NivelCursoDAO extends DAOBasico {
 
     public function executarDelete(Entidade $entidade) {
         $sql = "delete from      
-                    nivelCurso where id=$1";
+                    nivel_curso where id=$1";
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->execute();
@@ -52,7 +52,7 @@ class NivelCursoDAO extends DAOBasico {
     
     public function getById($id) {
         $sql = "select *  
-                    from nivelCurso
+                    from nivel_curso
                     where id = $1";
 
         $p = $this->getConn()->prepare($sql);
