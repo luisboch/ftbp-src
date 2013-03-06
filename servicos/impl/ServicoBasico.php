@@ -83,6 +83,9 @@ abstract class ServicoBasico implements EntidadeServico {
         } catch (Exception $e) {
             $this->dao->getConn()->rollback();
             $this->dao->reconnect();
+            
+            // Pega qualquer erro, tenta o rollback no banco 
+            // e tenta reconexão
             throw $e;
         }
     }
