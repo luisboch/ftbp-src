@@ -48,8 +48,10 @@ class NotificacaoDAO extends DAOBasico {
                    usuario_id,
                    descricao, 
                    data,
-                   data_expiracao)
-            values ($1, $2, $3, $4, $5)';
+                   data_expiracao,
+                   link)
+            values ($1, $2, $3, $4, $5, $6)';
+        
         $p = $this->getConn()->prepare($sqlInisert);
 
         // seta os parãmetros
@@ -63,7 +65,8 @@ class NotificacaoDAO extends DAOBasico {
         } else {
             $p->setParameter(5, NULL, PreparedStatement::STRING);
         }
-
+        $p->setParameter(6, $entidade->getLink(), PreparedStatement::STRING);
+        
         $p->execute();
 
         // Se ocorrer tudo bem com o insert seta o id na entidade.
@@ -79,12 +82,14 @@ class NotificacaoDAO extends DAOBasico {
         $sql = "update notificacoes
                   set excluida= " . ($entidade->getExcluida() ? 'true' : 'false') . ",
                       visualizada= " . ($entidade->getVisualizada() ? 'true' : 'false') . "
-                where id = $1";
+                      link = $1
+                where id = $2";
         $p = $this->getConn()->prepare($sql);
 
         // Seta os parãmetros
-        $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
-
+        $p->setParameter(1, $entidade->getLink(), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getId(), PreparedStatement::INTEGER);
+        
         // e finalmente executa.
         $p->execute();
     }
@@ -176,6 +181,7 @@ class NotificacaoDAO extends DAOBasico {
         $n->setDescricao($arr['descricao']);
         $n->setExcluida($arr['excluida']);
         $n->setVisualizada($arr['visualizada']);
+        $n->setLink($arr['link']);
         
         // TODO carregar usuário quando necessário.
         if($usuario !== null){

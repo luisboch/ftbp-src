@@ -50,6 +50,12 @@ class Notificacao implements Entidade{
     private $dataCriacao;
     
     /**
+     *
+     * @var string
+     */
+    private $link;
+    
+    /**
      * 
      * @return integer
      */
@@ -171,6 +177,24 @@ class Notificacao implements Entidade{
     public function setDataCriacao(DateTime $dataCriacao) {
         $this->dataCriacao = $dataCriacao;
     }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getLink() {
+        return $this->link;
+    }
+
+    /**
+     * 
+     * @param string $link
+     */
+    public function setLink($link) {
+        $this->link = $link;
+    }
+
+
 }
 
 ?>

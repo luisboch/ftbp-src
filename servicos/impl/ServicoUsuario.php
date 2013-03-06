@@ -30,7 +30,7 @@ class ServicoUsuario extends ServicoBasico {
     }
     
     public function validarAluno(Aluno $aluno){
-        
+        // TODO validar usuário
     }
     
     public function login($email, $senha){
