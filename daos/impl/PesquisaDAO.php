@@ -72,7 +72,6 @@ class PesquisaDAO extends DAOBasico {
         // pega o id da pesquisa
         $sql1 = "select nexval('pesquisa_id_seq') as id";
         
-        
         $p1 = $this->getConn()->prepare($sql1);
         $rs1 = $p1->execute();
         $rs1->next();
