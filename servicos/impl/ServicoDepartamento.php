@@ -11,7 +11,7 @@ require_once 'ftbp-src/daos/impl/DepartamentoDAO.php';
  *
  * @author luis
  */
-class DepartamentoServico extends ServicoBasico{
+class ServicoDepartamento extends ServicoBasico{
     
     /**
      * @var DepartamentoDAO
