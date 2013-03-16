@@ -11,7 +11,7 @@ require_once 'ftbp-src/daos/impl/NotificacaoDAO.php';
 class ServicoNotificacao extends ServicoBasico {
     
     function __construct() {
-        parent::__construct(new NotificacaoDAO());
+        parent::__construct(new NotificacaoDAO(), false);
     }
 
     public function validar(Entidade $entidade) {

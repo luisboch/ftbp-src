@@ -88,10 +88,6 @@ class Pesquisa implements Entidade, Pesquisavel{
         return array();
     }
 
-    public function getPalavrasChave() {
-        
-    }
-
 }
 
 ?>

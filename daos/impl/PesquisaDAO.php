@@ -2,7 +2,7 @@
 
 require_once 'ftbp-src/entidades/Pesquisavel.php';
 require_once 'ftbp-src/entidades/basico/Pesquisa.php';
-require_once 'ftbp-src/daos/EntidadeDAO. php';
+require_once 'ftbp-src/daos/EntidadeDAO.php';
 require_once 'ftbp-src/daos/impl/DAOBasico.php';
 /*
  * To change this template, choose Tools | Templates
@@ -19,7 +19,7 @@ class PesquisaDAO extends DAOBasico {
     /**
      * @param Pesquisavel $entidade
      */
-    public function executarDelete(Pesquisavel $entidade) {
+    public function executarDelete(Entidade $entidade) {
         
         // Pega o id da pesquisa
         $sql1 = "select id 
@@ -67,7 +67,7 @@ class PesquisaDAO extends DAOBasico {
     /**
      * @param Pesquisavel $entidade
      */
-    public function executarInsert(Pesquisavel $entidade) {
+    public function executarInsert(Entidade $entidade) {
         
         // pega o id da pesquisa
         $sql1 = "select nexval('pesquisa_id_seq') as id";
@@ -128,7 +128,7 @@ class PesquisaDAO extends DAOBasico {
     /**
      * @param Pesquisavel $entidade
      */
-    public function executarUpdate(Pesquisavel $entidade) {
+    public function executarUpdate(Entidade $entidade) {
         $this->executarDelete($entidade);
         $this->executarInsert($entidade);
     }

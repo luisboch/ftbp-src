@@ -38,15 +38,19 @@ abstract class ServicoBasico implements EntidadeServico {
      */
     protected $dao;
 
-    function __construct(DAOBasico $dao) {
+    function __construct(DAOBasico $dao, $iniciarServicos = true) {
 
         $this->dao = $dao;
         $this->dao->connect();
 
-        // Monta os servicos
-        $this->servicoPesquisa = new ServicoPesquisa();
-        $this->servicoNotificacao = new ServicoNotificacao();
+        if($iniciarServicos){
+            require_once 'ftbp-src/servicos/impl/ServicoNotificacao.php';
+            require_once 'ftbp-src/servicos/impl/ServicoPesquisa.php';
 
+            // Monta os servicos
+            $this->servicoPesquisa = new ServicoPesquisa();
+            $this->servicoNotificacao = new ServicoNotificacao();
+        }
         if (self::$logger === NULL) {
             self::$logger = Logger::getLogger(__CLASS__);
         }
