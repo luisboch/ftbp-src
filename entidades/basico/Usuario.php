@@ -233,6 +233,11 @@ class Usuario implements Entidade, Pesquisavel{
     public function getEntidade() {
         return $this;
     }
+    
+    public function __toString() {
+        return 'Usuario{nome:'.$this->getNome().', id:'.$this->getId().'}';
+    }
+
 }
 
 ?>
