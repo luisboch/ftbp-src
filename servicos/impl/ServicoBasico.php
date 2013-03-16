@@ -38,7 +38,12 @@ abstract class ServicoBasico implements EntidadeServico {
      */
     protected $dao;
 
-    function __construct(DAOBasico $dao, $iniciarServicos = true) {
+    /**
+     * 
+     * @param DAOBasico $dao
+     * @param boolean $loadCoreServices
+     */
+    function __construct(DAOBasico $dao, $loadCoreServices = true) {
 
         $this->dao = $dao;
         $this->dao->connect();
@@ -63,11 +68,15 @@ abstract class ServicoBasico implements EntidadeServico {
      * na tabela de pesquisa.
      * @param Entidade $entidade
      */
-    public function inserir(Entidade $entidade) {
+    public function inserir(Entidade $entidade, $autoCommit = true) {
         $this->checarAcesso();
+        
         try {
-            // Inicia a transação
-            $this->dao->getConn()->begin();
+            
+            if($autoCommit){
+                // Inicia a transação
+                $this->dao->getConn()->begin();
+            }
             
             // Executa o insert da entidade
             $this->dao->executarInsert($entidade);
@@ -81,15 +90,20 @@ abstract class ServicoBasico implements EntidadeServico {
             if($entidade instanceof Pesquisavel){
                 $this->inserirPesquisa($entidade);
             }
-
-            // Fecha a transação
-            $this->dao->getConn()->commit();
-        } catch (Exception $e) {
-            $this->dao->getConn()->rollback();
-            $this->dao->reconnect();
             
-            // Pega qualquer erro, tenta o rollback no banco 
+            if($autoCommit){
+                // Fecha a transação
+                $this->dao->getConn()->commit();
+            }
+        } catch (Exception $e) {
+            
+            // Pega qualquer erro, tenta o rollback no banco (se usou transacao) 
             // e tenta reconexão
+            if($autoCommit){
+                $this->dao->getConn()->rollback();
+                $this->dao->reconnect();
+            }
+            
             throw $e;
         }
     }
@@ -100,13 +114,13 @@ abstract class ServicoBasico implements EntidadeServico {
      * na tabela de pesquisa.
      * @param Entidade $entidade
      */
-    public function atualizar(Entidade $entidade) {
+    public function atualizar(Entidade $entidade, $autoCommit = true) {
         $this->checarAcesso();
         try {
-
-            // Inicia a transação
-            $this->dao->getConn()->begin();
-
+            if($autoCommit){
+                // Inicia a transação
+                $this->dao->getConn()->begin();
+            }
             // Executa o update na entidade
             $this->dao->executarUpdate($entidade);
 
@@ -119,16 +133,21 @@ abstract class ServicoBasico implements EntidadeServico {
             if($entidade instanceof Pesquisavel){
                 $this->atualizarPesquisa($entidade);
             }
-
-            // Fecha a transação
-            $this->dao->getConn()->commit();
+            
+            if($autoCommit){
+                // Fecha a transação
+                $this->dao->getConn()->commit();
+            }
             
         } catch (Exception $e) {
             
             // Pega qualquer erro, tenta o rollback no banco 
             // e tenta reconexão
-            $this->dao->getConn()->rollback();
-            $this->dao->reconnect();
+            if($autoCommit){
+                $this->dao->getConn()->rollback();
+                $this->dao->reconnect();
+            }
+            
             throw $e;
         }
     }
@@ -138,10 +157,13 @@ abstract class ServicoBasico implements EntidadeServico {
      * @param Notificavel $entidade
      */
     protected function salvarNotificacoes(Notificavel $entidade) {
+        
         $list = $entidade->getUsuariosAlvo();
 
         if (is_array($list)) {
+            
             for ($i = 0; $i < count($list); $i++) {
+                
                 $u = $list[$i];
                 $n = new Notificacao();
                 $n->setUsuario($u);
@@ -149,7 +171,11 @@ abstract class ServicoBasico implements EntidadeServico {
                 $n->setDataExpiracao($entidade->getDataExpiracao());
                 $n->setDescricao($entidade->getMensagem());
                 $n->setLink($entidade->getLink());
-                $this->servicoNotificacao->inserir($n);
+                
+                // Salva a notificação evitando a abertura de nova transação
+                // pois já estamos dentro de uma.
+                $this->servicoNotificacao->inserir($n, false);
+                
             }
         }
     }
@@ -158,8 +184,8 @@ abstract class ServicoBasico implements EntidadeServico {
      * Remove os links para a entidade, e coloca-os novamente, atualizando-o
      * @param Pesquisavel $pesquisavel
      */
-    public function atualizarPesquisa(Pesquisavel $pesquisavel){
-        $this->servicoPesquisa->atualizar($pesquisavel);
+    protected function atualizarPesquisa(Pesquisavel $pesquisavel){
+        $this->servicoPesquisa->atualizar($pesquisavel, false);
     }
 
     /**
@@ -167,7 +193,7 @@ abstract class ServicoBasico implements EntidadeServico {
      * @param Pesquisavel $pesquisavel
      */
     public function inserirPesquisa(Pesquisavel $pesquisavel){
-        $this->servicoPesquisa->atualizar($pesquisavel);
+        $this->servicoPesquisa->atualizar($pesquisavel, false);
     }
 
     /**
