@@ -59,7 +59,7 @@ class DepartamentoDAO extends DAOBasico {
         $rs = $p->getResult();
 
         if (!$rs->next()) {
-            throw new NoResultException("Usuário não encontrado");
+            throw new NoResultException("Departamento não encontrado");
         }
 
         return $this->montarDepartamento($rs);

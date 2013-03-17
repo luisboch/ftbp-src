@@ -41,7 +41,7 @@ class PesquisaDAO extends DAOBasico {
 
             $sql2 = "delete 
                   from palavras_chave 
-                 where pesquisa_id = $2";
+                 where pesquisa_id = $1";
 
             $p2 = $this->getConn()->prepare($sql2);
 
