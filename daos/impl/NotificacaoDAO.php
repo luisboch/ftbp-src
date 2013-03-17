@@ -34,14 +34,18 @@ class NotificacaoDAO extends DAOBasico {
      */
     public function executarInsert(Entidade $entidade) {
 
-        // Pega o próximo id
-        $sqlId = "select nextval('notificacoes_id_seq') as id";
-        $rs = $this->getConn()->query($sqlId);
-        $arr = $rs->fetchArray();
-        $id = $arr['id'];
-
+        
+        // Pega todos os ids dos usuários que existem.
+        $rs = $this->getConn()->query("select id from usuarios");
+        $usuarios = array();
+        
+        while($rs->next()){
+            $arr = $rs->fetchArray();
+            $usuarios[] = $arr['id'];
+        }
+        
         // Prepara a querie
-        $sqlInisert = '
+        $sqlInisert = "
             insert
               into notificacoes(
                    id, 
@@ -50,27 +54,26 @@ class NotificacaoDAO extends DAOBasico {
                    data,
                    data_expiracao,
                    link)
-            values ($1, $2, $3, $4, $5, $6)';
+            values ( nextval('notificacoes_id_seq') , $1, $2, $3, $4, $5)";
         
         $p = $this->getConn()->prepare($sqlInisert);
 
         // seta os parãmetros
-        $p->setParameter(1, $id, PreparedStatement::INTEGER);
-        $p->setParameter(2, $entidade->getUsuario()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
-        $p->setParameter(4, DAOUtil::toDataBaseTime($entidade->getData()), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getDescricao(), PreparedStatement::STRING);
+        $p->setParameter(3, DAOUtil::toDataBaseTime($entidade->getData()), PreparedStatement::STRING);
 
         if ($entidade->getDataExpiracao() != null) {
-            $p->setParameter(5, DAOUtil::toDataBaseTime($entidade->getDataExpiracao()), PreparedStatement::STRING);
+            $p->setParameter(4, DAOUtil::toDataBaseTime($entidade->getDataExpiracao()), PreparedStatement::STRING);
         } else {
-            $p->setParameter(5, NULL, PreparedStatement::STRING);
+            $p->setParameter(4, NULL, PreparedStatement::STRING);
         }
-        $p->setParameter(6, $entidade->getLink(), PreparedStatement::STRING);
+        $p->setParameter(5, $entidade->getLink(), PreparedStatement::STRING);
         
-        $p->execute();
-
-        // Se ocorrer tudo bem com o insert seta o id na entidade.
-        $entidade->setId($id);
+        // Insere a notificação pra cada usuário.
+        foreach( $usuarios as $v) {
+            $p->setParameter(1, $v, PreparedStatement::INTEGER);
+            $p->execute();
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-require_once 'ftbp-src/servicos/Servico.php';
+require_once 'ftbp-src/servicos/impl/ServicoBasico.php';
 require_once 'ftbp-src/daos/impl/DepartamentoDAO.php';
 
 /*

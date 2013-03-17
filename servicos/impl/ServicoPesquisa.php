@@ -8,12 +8,10 @@ require_once 'ftbp-src/daos/impl/PesquisaDAO.php';
  *
  * @author luis
  */
-class ServicoPesquisa extends ServicoBasico{
-    
-    
+class ServicoPesquisa extends ServicoBasico {
+
     function __construct() {
         parent::__construct(new PesquisaDAO(), false);
-        
     }
 
     public function validar(Entidade $entidade) {
@@ -29,7 +27,7 @@ class ServicoPesquisa extends ServicoBasico{
                 (getEntidade() está nulo.", "entidade");
         }
 
-        if ($entidade->getLink()) {
+        if ($entidade->getLink() == '') {
             $v->addError("Entidade pesquisável sem link não é permitido.", "link");
         }
 
@@ -47,6 +45,84 @@ class ServicoPesquisa extends ServicoBasico{
 
         if (!$v->isEmtpy()) {
             throw $v;
+        }
+    }
+    
+    
+    
+    /**
+     * Salva a entidade, e se esta for instancia de Notificavel 
+     * realiza a notificação, se for instancia de Pesquisavel, inclui
+     * na tabela de pesquisa.
+     * @param Entidade $entidade
+     */
+    public function inserir(Entidade $entidade, $autoCommit = true) {
+        $this->checarAcesso();
+        
+        $this->validar($entidade);
+        
+        try {
+            
+            if($autoCommit){
+                // Inicia a transação
+                $this->dao->getConn()->begin();
+            }
+            
+            // Executa o insert da entidade
+            $this->dao->executarInsert($entidade);
+            
+            if($autoCommit){
+                // Fecha a transação
+                $this->dao->getConn()->commit();
+            }
+        } catch (Exception $e) {
+            
+            // Pega qualquer erro, tenta o rollback no banco (se usou transacao) 
+            // e tenta reconexão
+            if($autoCommit){
+                $this->dao->getConn()->rollback();
+                $this->dao->reconnect();
+            }
+            
+            throw $e;
+        }
+    }
+    
+    /**
+     * Salva a entidade, e se esta for instancia de Notificavel 
+     * realiza a notificação, se for instancia de Pesquisavel, inclui
+     * na tabela de pesquisa.
+     * @param Entidade $entidade
+     */
+    public function atualizar(Entidade $entidade, $autoCommit = true) {
+        
+        $this->checarAcesso();
+        
+        $this->validar($entidade);
+        
+        try {
+            if($autoCommit){
+                // Inicia a transação
+                $this->dao->getConn()->begin();
+            }
+            // Executa o update na entidade
+            $this->dao->executarUpdate($entidade);
+            
+            if($autoCommit){
+                // Fecha a transação
+                $this->dao->getConn()->commit();
+            }
+            
+        } catch (Exception $e) {
+            
+            // Pega qualquer erro, tenta o rollback no banco 
+            // e tenta reconexão
+            if($autoCommit){
+                $this->dao->getConn()->rollback();
+                $this->dao->reconnect();
+            }
+            
+            throw $e;
         }
     }
 

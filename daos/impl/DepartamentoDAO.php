@@ -8,10 +8,9 @@ class DepartamentoDAO extends DAOBasico {
     
     public function executarInsert(Entidade $entidade) {
         
-        $sql = "INSERT    
-                 INTO departamento(
-                                   nome
-                 VALUES           ($1)";
+        $sql = "insert
+                  into departamento(nome)
+                values ($1)";
 
         $p = $this->getConn()->prepare($sql);
 

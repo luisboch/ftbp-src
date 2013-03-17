@@ -7,10 +7,6 @@ require_once 'ftbp-src/entidades/Entidade.php';
  */
 interface Notificavel extends Entidade{
     /**
-     * @return List<Usuario> 
-     */
-    function getUsuariosAlvo();
-    /**
      * @return string
      */
     function getLink();

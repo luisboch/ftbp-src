@@ -1,5 +1,7 @@
 <?php
-
+require_once 'ftbp-src/entidades/Entidade.php';
+require_once 'ftbp-src/entidades/Notificavel.php';
+require_once 'ftbp-src/entidades/Pesquisavel.php';
 /*
  * Departamento.php
  */
@@ -10,7 +12,7 @@
  * @author Luis
  * @since Feb 27, 2013
  */
-class Departamento implements Entidade{
+class Departamento implements Entidade, Pesquisavel, Notificavel{
     
     /**
      *
@@ -52,6 +54,46 @@ class Departamento implements Entidade{
 
     public function setDataCriacao($dataCriacao) {
         $this->dataCriacao = $dataCriacao;
+    }
+
+    public function getBreveDescricao() {
+        return "Departamento: ".$this->nome;
+    }
+
+    public function getData() {
+        return new DateTime();
+    }
+
+    public function getDataExpiracao() {
+        return  null;
+    }
+
+    public function getEntidade() {
+        return $this;
+    }
+
+    public function getLink() {
+        return 'DeparamtentoController/view/'.$this->id;
+    }
+
+    public function getMensagem() {
+        return 'Novo Departamento cadastrado "'.$this->nome.'"';
+    }
+
+    public function getNotificarEmail() {
+        return false;
+    }
+
+    public function getPalavrasChave() {
+        return array($this->id, $this->nome);
+    }
+
+    public function getTipo() {
+        return __CLASS__;
+    }
+
+    public function getTitulo() {
+        return "Departamento ".$this->nome;
     }
 }
 
