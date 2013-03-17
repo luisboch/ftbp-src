@@ -1,7 +1,9 @@
 <?php
+
 require_once 'ftbp-src/entidades/Entidade.php';
 require_once 'ftbp-src/entidades/Notificavel.php';
 require_once 'ftbp-src/entidades/Pesquisavel.php';
+require_once 'ftbp-src/daos/impl/DAOUtil.php';
 /*
  * Departamento.php
  */
@@ -12,26 +14,26 @@ require_once 'ftbp-src/entidades/Pesquisavel.php';
  * @author Luis
  * @since Feb 27, 2013
  */
-class Departamento implements Entidade, Pesquisavel, Notificavel{
-    
+class Departamento implements Entidade, Pesquisavel, Notificavel {
+
     /**
      *
      * @var integer
      */
     private $id;
-    
+
     /**
      *
      * @var string
      */
     private $nome;
-    
+
     /**
      *
      * @var DateTime
      */
     private $dataCriacao;
-    
+
     public function getId() {
         return $this->id;
     }
@@ -57,7 +59,7 @@ class Departamento implements Entidade, Pesquisavel, Notificavel{
     }
 
     public function getBreveDescricao() {
-        return "Departamento: ".$this->nome;
+        return "Departamento $this->nome, cadastrado em " . $this->getDataCriacao()->format('d/M/y');
     }
 
     public function getData() {
@@ -65,7 +67,7 @@ class Departamento implements Entidade, Pesquisavel, Notificavel{
     }
 
     public function getDataExpiracao() {
-        return  null;
+        return null;
     }
 
     public function getEntidade() {
@@ -73,11 +75,11 @@ class Departamento implements Entidade, Pesquisavel, Notificavel{
     }
 
     public function getLink() {
-        return 'DeparamtentoController/view/'.$this->id;
+        return 'DepartamentoController/item/' . $this->id;
     }
 
     public function getMensagem() {
-        return 'Novo Departamento cadastrado "'.$this->nome.'"';
+        return 'Novo Departamento cadastrado "' . $this->nome . '"';
     }
 
     public function getNotificarEmail() {
@@ -85,7 +87,12 @@ class Departamento implements Entidade, Pesquisavel, Notificavel{
     }
 
     public function getPalavrasChave() {
-        return array($this->id, $this->nome);
+        $arr = array();
+        if ($this->nome != '') {
+            $arr = explode(' ', $this->nome);
+        }
+        $arr[] = $this->id;
+        return $arr;
     }
 
     public function getTipo() {
@@ -93,8 +100,9 @@ class Departamento implements Entidade, Pesquisavel, Notificavel{
     }
 
     public function getTitulo() {
-        return "Departamento ".$this->nome;
+        return "Departamento " . $this->nome;
     }
+
 }
 
 ?>

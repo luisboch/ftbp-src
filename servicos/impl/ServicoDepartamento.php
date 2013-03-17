@@ -25,9 +25,15 @@ class ServicoDepartamento extends ServicoBasico{
 
     public function validar(Entidade $entidade) {
         $v = new ValidacaoExecao();
+        
         if($entidade->getNome() == ''){
             $v->addError('Nome do departamento inválido', 'nome');
         }
+        
+        if($entidade->getDataCriacao() == null){
+            $entidade->setDataCriacao(new DateTime());
+        }
+        
         if(!$v->isEmtpy()){
             throw $v;
         }

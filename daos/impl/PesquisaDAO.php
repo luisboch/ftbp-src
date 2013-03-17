@@ -145,10 +145,10 @@ class PesquisaDAO extends DAOBasico {
 
     /**
      * 
-     * @param List<Pesquisa> $string
-     * @return Pesquisa
+     * @param string $string
+     * @return List<Pesquisa>
      */
-    public function search($string = "") {
+    public function pesquisar($string = "") {
 
         // Prepara a querie levando em consideração apenas a tabela principal
         $sql = "select distinct p.* 
@@ -159,17 +159,22 @@ class PesquisaDAO extends DAOBasico {
         // os parãmetros que devem ser setados
 
         $params = array();
-        $i = 0;
+        $i = 1;
+        
         foreach ($palavras as $p) {
-            $sql .= "join palavras_chave on (pesquisa_id = p.id and lower(palavra) like lower($" . ($i) . ") ";
+            $sql .= "join palavras_chave p".$i." on (p".$i.".pesquisa_id = p.id and lower(p".$i.".palavra) like lower( $" . $i . " ) ) ";
             $i++;
             $params[] = $p;
         }
+        
+        // Limita a querie com os 50 primeiros registros.
+        $sql .= 'limit 50';
+        
         $pr = $this->getConn()->prepare($sql);
 
         // Seta todos os parãmetros.
-        for ($y = 0; $y < count($params); $y++) {
-            $pr->setParameter($y, $params[$y], PreparedStatement::STRING);
+        for ($y = 1; ($y-1) < count($params); $y++) {
+            $pr->setParameter($y, '%'.$params[$y].'%', PreparedStatement::STRING);
         }
 
         $rs = $pr->getResult();

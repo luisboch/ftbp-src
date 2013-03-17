@@ -125,6 +125,14 @@ class ServicoPesquisa extends ServicoBasico {
             throw $e;
         }
     }
+    
+    /**
+     * @param string $text
+     * @return List<Pesquisa>
+     */
+    public function pesquisar($text) {
+        return $this->dao->pesquisar($text);
+    }
 
 }
 
