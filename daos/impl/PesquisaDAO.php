@@ -163,8 +163,8 @@ class PesquisaDAO extends DAOBasico {
         
         foreach ($palavras as $p) {
             $sql .= "join palavras_chave p".$i." on (p".$i.".pesquisa_id = p.id and lower(p".$i.".palavra) like lower( $" . $i . " ) ) ";
+            $params[$i] = $p;
             $i++;
-            $params[] = $p;
         }
         
         // Limita a querie com os 50 primeiros registros.
