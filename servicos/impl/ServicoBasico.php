@@ -78,14 +78,14 @@ abstract class ServicoBasico implements EntidadeServico {
                 // Inicia a transação
                 $this->dao->getConn()->begin();
             }
-
-            // Executa o insert da entidade
-            $this->dao->executarInsert($entidade);
-
+            
             // Checa se é notificável e salva as notificações caso for
             if ($entidade instanceof Notificavel) {
                 $this->salvarNotificacoes($entidade);
             }
+
+            // Executa o insert da entidade
+            $this->dao->executarInsert($entidade);
 
             // Checa se é Pesquisável e salva na tabela de pesquisa.
             if ($entidade instanceof Pesquisavel) {

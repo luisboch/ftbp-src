@@ -65,7 +65,7 @@ class UsuarioDAO extends DAOBasico {
                        email           = $2,
                        senha           = $3,
                        departamento_id = $4,
-                       responsável     = ".( $entidade->getResponsavel()?'true':'false').",
+                       responsavel     = ".( $entidade->getResponsavel()?'true':'false').",
                        tipo_usuario    = $5
                  WHERE id = $6";
         

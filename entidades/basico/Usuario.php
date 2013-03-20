@@ -8,7 +8,7 @@ require_once 'ftbp-src/entidades/basico/Departamento.php';
  * @author Luis
  */
 
-class Usuario implements Entidade, Pesquisavel{
+class Usuario implements Entidade, Pesquisavel, Notificavel{
 
     /**
      * @var integer
@@ -236,6 +236,22 @@ class Usuario implements Entidade, Pesquisavel{
     
     public function __toString() {
         return 'Usuario{nome:'.$this->getNome().', id:'.$this->getId().'}';
+    }
+
+    public function getData() {
+        return new DateTime();
+    }
+
+    public function getDataExpiracao() {
+        return null;
+    }
+
+    public function getMensagem() {
+        return ($this->id == null?'Novo usuario cadastrado ':'Usuario alterado ').'"'.$this->nome.'['.$this->email.']"' ;
+    }
+
+    public function getNotificarEmail() {
+        return false;
     }
 
 }

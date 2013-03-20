@@ -1,6 +1,6 @@
 <?php
 require_once 'ftbp-src/servicos/impl/ServicoBasico.php';
-require_once 'ftbp-src/daos/impl/DepartamentoDAO.php';
+require_once 'ftbp-src/daos/impl/AreaDAO.php';
 
 /*
  * DepartamentoServico.php
@@ -11,7 +11,7 @@ require_once 'ftbp-src/daos/impl/DepartamentoDAO.php';
  *
  * @author luis
  */
-class ServicoDepartamento extends ServicoBasico{
+class ServicoArea extends ServicoBasico{
     
     /**
      * @var DepartamentoDAO
@@ -19,7 +19,7 @@ class ServicoDepartamento extends ServicoBasico{
     private $deparamentoDAO;
     
     function __construct() {
-        parent::__construct(new DepartamentoDAO());
+        parent::__construct(new AreaDAO());
         $this->deparamentoDAO = $this->dao;
     }
 
@@ -27,7 +27,7 @@ class ServicoDepartamento extends ServicoBasico{
         $v = new ValidacaoExecao();
         
         if($entidade->getNome() == ''){
-            $v->addError('Nome do departamento inválido', 'nome');
+            $v->addError('Nome da Area inválido', 'nome');
         }
         
         if($entidade->getDataCriacao() == null){
@@ -37,14 +37,7 @@ class ServicoDepartamento extends ServicoBasico{
         if(!$v->isEmtpy()){
             throw $v;
         }
-    }
-    /**
-     * 
-     * @return array
-     */
-    public function carregarDepartamentos() {
-        return $this->deparamentoDAO->carregarDepartamentos();
-    }
+    }    
 }
 
 ?>

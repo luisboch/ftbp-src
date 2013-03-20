@@ -41,15 +41,20 @@ class ServicoUsuario extends ServicoBasico {
         $v = new ValidacaoExecao();
         
         if ($usuario->getEmail() == null) {
-            $v->addError("Email inválido", "email");
+            $v->addError("Email do usuário inválido", "email");
         }
         
         if ($usuario->getNome() == null) {
-            $v->addError("Nome inválido", "nome");
+            $v->addError("Nome do usuário inválido", "nome");
         }
         
         if ($usuario->getSenha() == null) {
-            $v->addError("Senha inválida", "senha");
+            $v->addError("Senha do usuário inválida", "senha");
+        }
+        
+        // Checa se a data de criação foi setada, se não coloca como agora.
+        if($usuario->getDataCriacao() == null){
+            $usuario->setDataCriacao(new DateTime());
         }
         
         if (!$v->isEmtpy()) {
