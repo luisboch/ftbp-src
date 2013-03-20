@@ -19,8 +19,7 @@ class ServicoUsuario extends ServicoBasico {
      * @var UsuarioDAO
      */
     protected $usuarioDAO;
-    
-    
+
     function __construct() {
         parent::__construct(new UsuarioDAO());
         $this->usuarioDAO = $this->dao;
@@ -39,29 +38,34 @@ class ServicoUsuario extends ServicoBasico {
      */
     public function validarUsuario(Usuario $usuario) {
         $v = new ValidacaoExecao();
-        
+
         if ($usuario->getEmail() == null) {
             $v->addError("Email do usuário inválido", "email");
         }
-        
+
         if ($usuario->getNome() == null) {
             $v->addError("Nome do usuário inválido", "nome");
         }
-        
-        if ($usuario->getSenha() == null) {
+
+        // Valida a senha somente se for novo usuário
+        if ($usuario->getSenha() == null && $usuario->getId() == null) {
             $v->addError("Senha do usuário inválida", "senha");
         }
         
+        if ($usuario->getDepartamento() == null && $usuario->getTipoUsuario() == TipoUsuario::FUNCIONARIO) {
+            $v->addError("Departamento do usuário inválido", "senha");
+        }
+
         // Checa se a data de criação foi setada, se não coloca como agora.
-        if($usuario->getDataCriacao() == null){
+        if ($usuario->getDataCriacao() == null) {
             $usuario->setDataCriacao(new DateTime());
         }
-        
+
         if (!$v->isEmtpy()) {
             throw $v;
         }
     }
-    
+
     /**
      * 
      * @param string $email

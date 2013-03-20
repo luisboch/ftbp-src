@@ -174,7 +174,7 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
      * @return string
      */
     public function getTipo() {
-        return get_class($this);
+        return __CLASS__;
     }
     
     /**
@@ -195,7 +195,7 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
     /**
      * @param Departamento $departamento
      */
-    public function setDepartamento(Departamento $departamento) {
+    public function setDepartamento($departamento) {
         $this->departamento = $departamento;
     }
     /**

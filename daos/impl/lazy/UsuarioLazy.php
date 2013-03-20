@@ -44,7 +44,7 @@ class UsuarioLazy extends Usuario{
      * 
      * @param Departamento $departamento
      */
-    public function setDepartamento(Departamento $departamento) {
+    public function setDepartamento($departamento) {
         parent::setDepartamento($departamento);
         $this->dpCarregado = true;
     }

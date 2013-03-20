@@ -63,28 +63,32 @@ class UsuarioDAO extends DAOBasico {
         $sql = "UPDATE usuarios
                    SET nome            = $1,
                        email           = $2,
-                       senha           = $3,
-                       departamento_id = $4,
+                       departamento_id = $3,
                        responsavel     = ".( $entidade->getResponsavel()?'true':'false').",
-                       tipo_usuario    = $5
-                 WHERE id = $6";
+                       tipo_usuario    = $4 ";
+        if($entidade->getSenha() != ''){
+           $sql .= ",senha           = $6 ";
+        }
+        $sql .= "WHERE id = $5";
         
         $p = $this->getConn()->prepare($sql);
 
         $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(2, $entidade->getEmail(), PreparedStatement::STRING);
-        $p->setParameter(3, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
         
         if($entidade->getDepartamento() ==  NULL){
-            $p->setParameter(4, NULL, PreparedStatement::INTEGER);
+            $p->setParameter(3, NULL, PreparedStatement::INTEGER);
         } else{
-            $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
+            $p->setParameter(3, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
+        }
+        $p->setParameter(4, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
+        
+        $p->setParameter(5, $entidade->getId(), PreparedStatement::INTEGER);
+
+        if($entidade->getSenha() != ''){
+            $p->setParameter(6, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
         }
         
-        $p->setParameter(5, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
-        
-        $p->setParameter(6, $entidade->getId(), PreparedStatement::INTEGER);
-
         $p->execute();
     }
 
@@ -134,7 +138,7 @@ class UsuarioDAO extends DAOBasico {
         $u->setNome($arr['nome']);
         $u->setId($arr['id']);
         $u->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
-        $u->setResponsavel($arr['responsavel']);
+        $u->setResponsavel($arr['responsavel'] === 't');
         $u->setTipoUsuario($arr['tipo_usuario']);
         $u->setDepartamentoId($arr['departamento_id']);
         
