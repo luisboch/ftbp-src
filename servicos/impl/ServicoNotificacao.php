@@ -11,8 +11,15 @@ require_once 'ftbp-src/servicos/execoes/ValidacaoExecao.php';
  */
 class ServicoNotificacao extends ServicoBasico {
     
+    /**
+     *
+     * @var NotificacaoDAO
+     */
+    private $notificaoDAO ;
+    
     function __construct() {
         parent::__construct(new NotificacaoDAO(), false);
+        $this->notificaoDAO = $this->dao;
     }
 
     public function validar(Entidade $entidade) {
@@ -114,6 +121,16 @@ class ServicoNotificacao extends ServicoBasico {
             throw $e;
         }
     }
+    
+    public function carregarUltimasNotificacoes(Usuario $usuario) {
+        return $this->notificaoDAO->carregarUltimasNotificacoes($usuario);
+    }
+    
+    public function getByUser(Usuario $usuario) {
+        return $this->notificaoDAO->getByUser($usuario);
+    }
+    
+    
 }
 
 ?>

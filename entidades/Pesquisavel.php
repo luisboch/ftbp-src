@@ -11,6 +11,7 @@
 interface Pesquisavel{
     
     /**
+     * @param boolean $new Declare if instance is new or not
      * @return string
      */
     function getTitulo();

@@ -245,9 +245,13 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
     public function getDataExpiracao() {
         return null;
     }
-
-    public function getMensagem() {
-        return ($this->id == null?'Novo usuario cadastrado ':'Usuario alterado ').'"'.$this->nome.'['.$this->email.']"' ;
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getMensagem($new = false) {
+        return ($new?'Novo usuario cadastrado ':'Usuario alterado ').'"'.$this->nome.' ['.$this->email.']"' ;
     }
 
     public function getNotificarEmail() {

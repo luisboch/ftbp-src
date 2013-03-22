@@ -17,9 +17,10 @@ interface Notificavel extends Entidade{
     function getNotificarEmail();
     
     /**
+     * @param boolean $new Declare if instance is new or not
      * @return string
      */
-    function getMensagem();
+    function getMensagem($new = false);
     
     /**
      * @return DateTime

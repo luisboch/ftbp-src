@@ -79,13 +79,13 @@ abstract class ServicoBasico implements EntidadeServico {
                 $this->dao->getConn()->begin();
             }
             
-            // Checa se é notificável e salva as notificações caso for
-            if ($entidade instanceof Notificavel) {
-                $this->salvarNotificacoes($entidade);
-            }
-
             // Executa o insert da entidade
             $this->dao->executarInsert($entidade);
+
+            // Checa se é notificável e salva as notificações caso for
+            if ($entidade instanceof Notificavel) {
+                $this->salvarNotificacoes($entidade, true);
+            }
 
             // Checa se é Pesquisável e salva na tabela de pesquisa.
             if ($entidade instanceof Pesquisavel) {
@@ -160,7 +160,7 @@ abstract class ServicoBasico implements EntidadeServico {
      * Insere as notificações para todos os usuários da lista do Notificavel
      * @param Notificavel $entidade
      */
-    protected function salvarNotificacoes(Notificavel $entidade) {
+    protected function salvarNotificacoes(Notificavel $entidade, $new = false) {
 
         $n = new Notificacao();
         $n->setData($entidade->getData());
@@ -169,7 +169,7 @@ abstract class ServicoBasico implements EntidadeServico {
             $n->setDataExpiracao($entidade->getDataExpiracao());
         }
 
-        $n->setDescricao($entidade->getMensagem());
+        $n->setDescricao($entidade->getMensagem($new));
         $n->setLink($entidade->getLink());
 
         // Salva a notificação evitando a abertura de nova transação

@@ -105,8 +105,8 @@ class AreaCurso implements Entidade, Pesquisavel, Notificavel{
         return null;
     }
 
-    public function getMensagem() {
-        return ($this->id == null ? 'Nova ' : '') . 'Area ' . ($this->id == null ? 'cadastrada' : 'alterada') . ' "' . $this->nome . '"';
+    public function getMensagem($new = false) {
+        return ($new ? 'Nova ' : '') . 'Area ' . ($new ? 'cadastrada' : 'alterada') . ' "' . $this->nome . '"';
     }
 
     public function getNotificarEmail() {

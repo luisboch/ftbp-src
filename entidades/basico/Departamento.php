@@ -78,8 +78,8 @@ class Departamento implements Entidade, Pesquisavel, Notificavel {
         return 'DepartamentoController/item/' . $this->id;
     }
 
-    public function getMensagem() {
-        return ($this->id == null ? 'Novo ' : '') . 'Departamento ' . ($this->id == null ? 'cadastrado' : 'alterado') . ' "' . $this->nome . '"';
+    public function getMensagem($new = false) {
+        return ($new ? 'Novo ' : '') . 'Departamento ' . ($new ? 'cadastrado' : 'alterado') . ' "' . $this->nome . '"';
     }
 
     public function getNotificarEmail() {

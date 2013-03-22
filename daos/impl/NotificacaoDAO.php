@@ -194,6 +194,36 @@ class NotificacaoDAO extends DAOBasico {
         return $n;
         
     }
+    
+    public function carregarUltimasNotificacoes(Usuario $usuario) {
+         
+        // Prepara a querie ordenando pela data decrescente
+        $sql = "select *
+                  from notificacoes
+                 where usuario_id = $1
+                   and excluida = false
+                   and data_expiracao >= now()
+              order by \"data\" desc limit 10";
+        
+        $p = $this->getConn()->prepare($sql);
+        
+        // Seta os parãmetros
+        $p->setParameter(1, $usuario->getId(), PreparedStatement::INTEGER);
+        
+        // Pega o resultado
+        $rs = $p->getResult();
+        
+        // Itera sobre o resultado
+        $list = array();
+        while($rs->next()){
+            
+            // Monta o objeto 
+            $list[] = $this->montarNotificacao($rs, $usuario);
+        }
+        
+        // Retorna a lista montada.
+        return $list;
+    }
 }
 
 ?>
