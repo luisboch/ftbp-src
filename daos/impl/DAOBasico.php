@@ -1,4 +1,5 @@
 <?php
+require_once 'log4php/Logger.php';
 require_once 'database-api/database.php';
 require_once 'ftbp-src/daos/EntidadeDAO.php';
 /*

@@ -194,6 +194,31 @@ class UsuarioDAO extends DAOBasico {
         $usuario->setDepartamento($dp);
         
     }
+    
+    
+    /**
+     * @param array $ids
+     * @return array
+     * @throws NoResultException
+     */
+    public function getByIds($ids) {
+        
+        $list = array();
+        if($ids != '' && is_array($ids) && !empty($ids)){
+            $sql = "select *  
+                     from usuarios
+                    where id in (".  DAOUtil::listToString($ids).")";
+            
+            $rs = $this->getConn()->query($sql);
+            echo 'qtd->'.$rs->getNumRows().'\n';
+            while($rs->next()){
+                $list[] = $this->montarUsuario($rs);
+            }
+            
+        }
+        
+        return $list;
+    }
 }
 
 ?>

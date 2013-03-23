@@ -34,6 +34,29 @@ class DAOUtil {
         return $date;
     }
     
+    
+    /**
+     * 
+     * @param type $dateTime
+     * @return string
+     */
+    public static function listToString($list){
+        $str = "";
+        if($list != '' && is_array($list)){
+            $i = 0;
+            foreach( $list as $v){
+                if($i != 0){
+                    $str .= ",".$v;
+                } else{
+                    $str .= $v;
+                }
+                
+                $i++;
+            }
+        }
+        return $str;
+    }
+    
 }
 
 ?>

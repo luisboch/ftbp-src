@@ -1,5 +1,7 @@
 <?php
-require_once './ftbp-src/entidades/basico/Usuario.php';
+require_once 'ftbp-src/entidades/basico/Usuario.php';
+require_once 'ftbp-src/daos/impl/ChatDAO.php';
+require_once 'ftbp-src/session/SessionManager.php';
 /*
  * Chat.php
  */
@@ -11,6 +13,25 @@ require_once './ftbp-src/entidades/basico/Usuario.php';
  * @since Feb 24, 2013
  */
 class Chat {
+    
+    /**
+     *
+     * @var ChatDAO
+     */
+    private $chatDAO;
+    
+    /**
+     *
+     * @var SessionManager
+     */
+    private $session;
+    
+    function __construct() {
+        $this->chatDAO = new ChatDAO();
+        $this->session = SessionManager::getInstance();
+    }
+
+    
     /**
      * 
      * @param Usuario $from
@@ -35,6 +56,10 @@ class Chat {
          }
          fwrite($fp, $message."\n");
          fclose($fp);
+    }
+    
+    public function carregarUsuariosAtivos() {
+        return $this->chatDAO->carregarUsuariosAtivos($this->session->getInstance());
     }
     
     
