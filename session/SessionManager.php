@@ -16,6 +16,12 @@ class SessionManager {
     
     /**
      *
+     * @var boolean
+     */
+    private $showChat = true;
+    
+    /**
+     *
      * @var Usuario
      */
     private $usuario;
@@ -65,5 +71,12 @@ class SessionManager {
         $this->usuario = $usuario;
     }
 
+    public function getShowChat() {
+        return $this->showChat;
+    }
+
+    public function setShowChat($showChat) {
+        $this->showChat = $showChat;
+    }
 }
 ?>
