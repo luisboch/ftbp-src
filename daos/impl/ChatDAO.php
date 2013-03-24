@@ -29,13 +29,12 @@ class ChatDAO {
      * @param string $message
      */
     public function enviarMensagem(Usuario $from, $to, $message) {
-// from file
-        $file = "users/" . $from->getId() . "/";
+
     }
 
     public function carregarUsuariosAtivos(Usuario $usuario) {
 
-        $file = BASEPATH . self::GLOBAL_PATH . 'usuarios.xml';
+        $file = APP_PATH . self::GLOBAL_PATH . 'usuarios.xml';
         
         $dom = new DOMDocument("1.0", 'UTF-8');
 
@@ -73,7 +72,6 @@ class ChatDAO {
 
             if (((int) $id) == $usuario->getId()) {
                 
-                echo 'found ......\n';
                 if ($userNode !== null) {
                     $root->removeChild($userNode);
                 }

@@ -59,7 +59,7 @@ class Chat {
     }
     
     public function carregarUsuariosAtivos() {
-        return $this->chatDAO->carregarUsuariosAtivos($this->session->getInstance());
+        return $this->chatDAO->carregarUsuariosAtivos($this->session->getUsuario());
     }
     
     

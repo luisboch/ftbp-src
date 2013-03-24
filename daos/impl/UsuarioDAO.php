@@ -210,7 +210,7 @@ class UsuarioDAO extends DAOBasico {
                     where id in (".  DAOUtil::listToString($ids).")";
             
             $rs = $this->getConn()->query($sql);
-            echo 'qtd->'.$rs->getNumRows().'\n';
+            
             while($rs->next()){
                 $list[] = $this->montarUsuario($rs);
             }
