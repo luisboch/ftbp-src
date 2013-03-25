@@ -69,25 +69,29 @@ class Mensagens {
     public function criarXml($includeHeader = false) {
 
         $return = '';
-        
+
         if ($includeHeader) {
             header('Content-Type: text/xml; charset=utf-8');
             $return .= '<?xml version="1.0" encoding="UTF-8"?>
                         <root>';
         }
-        
+
         $msgs = $this->getMsgs();
         $types = $this->getTipos();
+        
+        if (count($msgs) > 0) {
             $return .= '<messages>';
-        foreach ($msgs as $k => $v) {
-            $return .= '<message>';
-            $return .= '<text>' . $v . '</text>';
-            $return .= '<type>' . $types[$k] . '</type>';
-            $return .= '</message>';
+            foreach ($msgs as $k => $v) {
+                $return .= '<message>';
+                $return .= '<text>' . $v . '</text>';
+                $return .= '<type>' . $types[$k] . '</type>';
+                $return .= '</message>';
+            }
+
+            $return .= '</messages>';
         }
         
-            $return .= '</messages>';
-         if ($includeHeader) {
+        if ($includeHeader) {
             $return .= '</root>';
         }
         return $return;
