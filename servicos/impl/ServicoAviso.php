@@ -3,11 +3,11 @@ require_once 'ftbp-src/servicos/impl/ServicoBasico.php';
 require_once 'ftbp-src/daos/impl/AvisoDAO.php';
 
 /*
- * DepartamentoServico.php
+ * AvisoServico.php
  */
 
 /**
- * Description of DepartamentoServico
+ * Description of AvisoServico
  *
  * @author luis
  */
@@ -27,12 +27,12 @@ class ServicoAviso extends ServicoBasico{
         $v = new ValidacaoExecao();
         
         if($entidade->getTitulo() == ''){
-            $v->addError('titulo aviso inválido', 'titulo');
+            $v->addError('titulo aviso inválido puta', 'titulo');
         }
         
-        if($entidade->getDataCriacao() == null){
-            $entidade->setDataCriacao(new DateTime());
-        }
+        //if($entidade->getDataCriacao() == null){
+          //  $entidade->setDataCriacao(new DateTime());
+        //}
         
         if(!$v->isEmtpy()){
             throw $v;
@@ -42,8 +42,8 @@ class ServicoAviso extends ServicoBasico{
      * 
      * @return array
      */
-    public function carregarDepartamentos() {
-        return $this->deparamentoDAO->carregarDepartamentos();
+    public function carregarAviso() {
+        return $this->avisoDAO->carregarAviso();
     }
 }
 

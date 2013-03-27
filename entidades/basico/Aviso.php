@@ -1,8 +1,8 @@
 <?php
 
 require_once 'ftbp-src/entidades/Entidade.php';
-require_once 'ftbp-src/entidades/Notificavel.php';
-require_once 'ftbp-src/entidades/Pesquisavel.php';
+//require_once 'ftbp-src/entidades/Notificavel.php';
+//require_once 'ftbp-src/entidades/Pesquisavel.php';
 require_once 'ftbp-src/daos/impl/DAOUtil.php';
 /*
  * Departamento.php
@@ -14,7 +14,7 @@ require_once 'ftbp-src/daos/impl/DAOUtil.php';
  * @author Luis
  * @since Feb 27, 2013
  */
-class Aviso implements Entidade, Pesquisavel, Notificavel {
+class Aviso implements Entidade{//, Pesquisavel, Notificavel {
 
     /**
      *

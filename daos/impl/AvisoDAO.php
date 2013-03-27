@@ -1,7 +1,10 @@
 <?php
 
 require_once 'ftbp-src/daos/EntidadeDAO.php';
+require_once 'ftbp-src/entidades/basico/Aviso.php';
 require_once 'DAOBasico.php';
+
+
 
 class AvisoDAO extends DAOBasico {
 
@@ -9,11 +12,12 @@ class AvisoDAO extends DAOBasico {
 
         $sql = "INSERT INTO aviso(
                     titulo, descricao, data_criacao, usuario_id)
-                VALUES (?, ?, ?, ?)";
+                VALUES (?, ?, now(), 1)";
 
         $p = $this->getConn()->prepare($sql);
 
-        $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
+        $p->setParameter(1, $entidade->getTitulo(), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getDescricao(), PreparedStatement::STRING);
 
         $p->execute();
 
@@ -51,7 +55,7 @@ class AvisoDAO extends DAOBasico {
 
     public function getById($id) {
         $sql = "select *  
-                 from departamento
+                 from aviso
                  where id = $1";
 
         $p = $this->getConn()->prepare($sql);
@@ -59,40 +63,40 @@ class AvisoDAO extends DAOBasico {
         $rs = $p->getResult();
 
         if (!$rs->next()) {
-            throw new NoResultException("Departamento não encontrado");
+            throw new NoResultException("Aviso não encontrado");
         }
 
-        return $this->montarDepartamento($rs);
+        return $this->montarAviso($rs);
     }
 
     /**
      * 
      * @param ResultSet $rs
-     * @return Departamento
+     * @return Aviso
      */
-    public function montarDepartamento(ResultSet $rs) {
+    public function montarAviso(ResultSet $rs) {
         $arr = $rs->fetchArray();
-        $dp = new Departamento();
-        $dp->setId($arr['id']);
-        $dp->setNome($arr['nome']);
-        return $dp;
+        $av = new Aviso();
+        $av->setId($arr['id']);
+        //$dp->setNome($arr['nome']);
+        return $av;
     }
 
     /**
      * 
      * @return array
      */
-    public function carregarDepartamentos() {
+    public function carregarAviso() {
         
         $sql = "select *  
-                  from departamento
-              order by nome";
+                  from aviso
+              ";
         
         $rs = $this->getConn()->query($sql);
         
         $list = array();
         while ($rs->next()) {
-            $list[] = $this->montarDepartamento($rs);
+            $list[] = $this->montarAviso($rs);
         }
         return $list;
     }
