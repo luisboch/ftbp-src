@@ -12,7 +12,7 @@ class AvisoDAO extends DAOBasico {
 
         $sql = "INSERT INTO aviso(
                     titulo, descricao, data_criacao, usuario_id)
-                VALUES (?, ?, now(), 1)";
+                VALUES ($1, $2, now(), 1)";
 
         $p = $this->getConn()->prepare($sql);
 
@@ -33,8 +33,8 @@ class AvisoDAO extends DAOBasico {
 
     public function executarUpdate(Entidade $entidade) {
 
-        $sql = "UPDATE departamento
-                   SET nome            = $1
+        $sql = "UPDATE aviso
+                   SET titulo            = $1
                    WHERE id =$2";
 
         $p = $this->getConn()->prepare($sql);
