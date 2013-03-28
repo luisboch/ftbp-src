@@ -27,7 +27,7 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
      * @var string 
      */
     
-    private $titulo;
+    private $nome;
     
     /**
      *
@@ -50,12 +50,12 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
         $this->id = $id;
     }
 
-    public function getTitulo() {
-        return $this->titulo;
+    public function getNome() {
+        return $this->nome;
     }
     
-    public function setTitulo($titulo) {
-        $this->titulo = $titulo;
+    public function setNome($nome) {
+        $this->nome = $nome;
     }
 
     public function getDescricao() {

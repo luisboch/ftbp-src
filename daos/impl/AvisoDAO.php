@@ -16,7 +16,7 @@ class AvisoDAO extends DAOBasico {
 
         $p = $this->getConn()->prepare($sql);
 
-        $p->setParameter(1, $entidade->getTitulo(), PreparedStatement::STRING);
+        $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(2, $entidade->getDescricao(), PreparedStatement::STRING);
 
         $p->execute();

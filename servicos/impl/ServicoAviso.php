@@ -26,9 +26,11 @@ class ServicoAviso extends ServicoBasico{
     public function validar(Entidade $entidade) {
         $v = new ValidacaoExecao();
         
-        if($entidade->getTitulo() == ''){
+        if($entidade->getNome() == ''){
             $v->addError('titulo aviso inválido puta', 'titulo');
         }
+        
+        
         
         //if($entidade->getDataCriacao() == null){
           //  $entidade->setDataCriacao(new DateTime());
