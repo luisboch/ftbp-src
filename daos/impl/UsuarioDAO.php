@@ -22,7 +22,7 @@ class UsuarioDAO extends DAOBasico {
      * @throws Exception
      */
     public function executarInsert(Entidade $entidade) {
-        
+
         $sql = "INSERT 
                  INTO usuarios(
                       nome,
@@ -31,7 +31,7 @@ class UsuarioDAO extends DAOBasico {
                       departamento_id,
                       responsavel,
                       tipo_usuario)
-               VALUES ($1, $2, $3, $4, ".( $entidade->getResponsavel()?'true':'false').", $5)";
+               VALUES ($1, $2, $3, $4, " . ( $entidade->getResponsavel() ? 'true' : 'false') . ", $5)";
 
 
         $p = $this->getConn()->prepare($sql);
@@ -39,15 +39,15 @@ class UsuarioDAO extends DAOBasico {
         $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(2, $entidade->getEmail(), PreparedStatement::STRING);
         $p->setParameter(3, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
-        
-        if($entidade->getDepartamento() ==  NULL){
+
+        if ($entidade->getDepartamento() == NULL) {
             $p->setParameter(4, NULL, PreparedStatement::INTEGER);
-        } else{
+        } else {
             $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
         }
-        
+
         $p->setParameter(5, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
-        
+
         $p->execute();
 
         // Pega o id gerado na sequence 
@@ -59,36 +59,36 @@ class UsuarioDAO extends DAOBasico {
     }
 
     public function executarUpdate(Entidade $entidade) {
-        
+
         $sql = "UPDATE usuarios
                    SET nome            = $1,
                        email           = $2,
                        departamento_id = $3,
-                       responsavel     = ".( $entidade->getResponsavel()?'true':'false').",
+                       responsavel     = " . ( $entidade->getResponsavel() ? 'true' : 'false') . ",
                        tipo_usuario    = $4 ";
-        if($entidade->getSenha() != ''){
-           $sql .= ",senha           = $6 ";
+        if ($entidade->getSenha() != '') {
+            $sql .= ",senha           = $6 ";
         }
         $sql .= "WHERE id = $5";
-        
+
         $p = $this->getConn()->prepare($sql);
 
         $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(2, $entidade->getEmail(), PreparedStatement::STRING);
-        
-        if($entidade->getDepartamento() ==  NULL){
+
+        if ($entidade->getDepartamento() == NULL) {
             $p->setParameter(3, NULL, PreparedStatement::INTEGER);
-        } else{
+        } else {
             $p->setParameter(3, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
         }
         $p->setParameter(4, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
-        
+
         $p->setParameter(5, $entidade->getId(), PreparedStatement::INTEGER);
 
-        if($entidade->getSenha() != ''){
+        if ($entidade->getSenha() != '') {
             $p->setParameter(6, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
         }
-        
+
         $p->execute();
     }
 
@@ -132,7 +132,7 @@ class UsuarioDAO extends DAOBasico {
      */
     private function montarUsuario(ResultSet $rs) {
         $arr = $rs->fetchArray();
-        
+
         $u = new UsuarioLazy($this);
         $u->setEmail($arr['email']);
         $u->setNome($arr['nome']);
@@ -141,7 +141,7 @@ class UsuarioDAO extends DAOBasico {
         $u->setResponsavel($arr['responsavel'] === 't');
         $u->setTipoUsuario($arr['tipo_usuario']);
         $u->setDepartamentoId($arr['departamento_id']);
-        
+
         return $u;
     }
 
@@ -165,60 +165,85 @@ class UsuarioDAO extends DAOBasico {
 
         return $this->montarUsuario($rs);
     }
-    
+
     /**
      * Carrega o usuário com o departamento relacionado.
      * @param Usuario $usuario
      * @throws NoResultException quanto não encontra o Departamento.
      */
-    public function carregarDepartamentoUsuario(Usuario $usuario, $dpartamentId){
+    public function carregarDepartamentoUsuario(Usuario $usuario, $dpartamentId) {
         $sql = "select * 
                   from departamento 
                  where id = $1";
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, $dpartamentId, PreparedStatement::INTEGER);
-        
+
         $rs = $p->getResult();
-        
-        if(!$rs->next()){
+
+        if (!$rs->next()) {
             throw new NoResultException(
-                    "Departamento com o id ".$dpartamentId. " não encontrando");
+            "Departamento com o id " . $dpartamentId . " não encontrando");
         }
-        
+
         $arr = $rs->fetchArray();
         $dp = new Departamento();
         $dp->setId($arr['id']);
         $dp->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
         $dp->setNome($arr['nome']);
-        
+
         $usuario->setDepartamento($dp);
-        
     }
-    
-    
+
     /**
      * @param array $ids
      * @return array
      * @throws NoResultException
      */
     public function getByIds($ids) {
-        
+
         $list = array();
-        if($ids != '' && is_array($ids) && !empty($ids)){
+        if ($ids != '' && is_array($ids) && !empty($ids)) {
             $sql = "select *  
                      from usuarios
-                    where id in (".  DAOUtil::listToString($ids).")";
-            
+                    where id in (" . DAOUtil::listToString($ids) . ")";
+
             $rs = $this->getConn()->query($sql);
-            
-            while($rs->next()){
+
+            while ($rs->next()) {
                 $list[] = $this->montarUsuario($rs);
             }
+        }
+
+        return $list;
+    }
+
+    /**
+     * Carrega os responsáveis pelos departamentos solicitados, 
+     * selecionados pelos @param $ids.
+     * @param array $ids
+     * @return List<Aluno>
+     * @throws NoResultException
+     */
+    public function carregarResponsavelDepartamento($ids = array()) {
+        
+        $list = array();
+        
+        if (isset($ids) && is_array($ids) && count($ids) > 0) {
             
+            $sql = "select *  
+                 from usuarios
+                where responsável = true and departamento_id in (" . DAOUtil::listToString($ids) . ")";
+
+            $rs = $this->getConn()->query($sql);
+
+            while ($rs->next()){
+                $list[] = $this->montarUsuario($rs);
+            }
         }
         
         return $list;
     }
+
 }
 
 ?>
