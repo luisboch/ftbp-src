@@ -221,34 +221,35 @@ class UsuarioDAO extends DAOBasico {
     }
     
     public function carregarTodosOsUsuarios() {
+
+        $list = array();
+        
+        
         $sql = "select *  
                  from usuarios";
 
         $rs = $this->getConn()->query($sql);
 
-        if (!$rs->next()) {
-            throw new NoResultException("Usuário não encontrado");
+        while ($rs->next()){
+            $list[] = $this->montarUsuario($rs);
         }
-
-        return $this->montarUsuario($rs);
+        return $list;
     }
     
     public function carregarUsuariosDepartamento($dep){
+        
+        $list = array();
+        
         $sql = "select *  
                  from usuarios
-                 where departamento_id = $1";
-
-        $p = $this->getConn()->prepare($sql);
+                 where departamento_id in (".DAOUtil::listToString($dep).")";
         
-        $p->setParameter(1, $id, PreparedStatement::INTEGER);
-        
-        $rs = $p->getResult();
+        $rs = $this->getConn()->query($sql);
 
-        if (!$rs->next()) {
-            throw new NoResultException("Usuário não encontrado");
+        while ($rs->next()){
+            $list[] = $this->montarUsuario($rs);
         }
-
-        return $this->montarUsuario($rs);
+        return $list;
     }
     
 }
