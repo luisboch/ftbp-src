@@ -9,45 +9,52 @@ require_once 'DAOBasico.php';
 class AvisoDAO extends DAOBasico {
 
     public function executarInsert(Entidade $entidade) {
-
+        
+        $sql = "select nextval('aviso_id_seq') as id";
+        
+        $rs = $this->getConn()->query($sql);
+        
+        $rs->next();
+        
+        $arr = $rs->fetchArray();
+        
+        $id = $arr['id'];
+        
         $sql = "INSERT INTO aviso(
-                    titulo, descricao, data_criacao, usuario_id)
-                VALUES ($1, $2, now(), 1)";
+                    id, titulo, descricao, data_criacao, usuario_id)
+                VALUES ($1,$2, $3, now(), $4)";
 
         $p = $this->getConn()->prepare($sql);
 
-        $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
-        $p->setParameter(2, $entidade->getDescricao(), PreparedStatement::STRING);
+        $p->setParameter(1, $id, PreparedStatement::INTEGER);
+        $p->setParameter(2, $entidade->getNome(), PreparedStatement::STRING);
+        $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
+        $p->setParameter(4, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
 
         $p->execute();
+        
+        $sql = "insert into aviso_destinatario( aviso_id, usuario_id) values ($1, $2)";
+        
+        $p = $this->getConn()->prepare($sql);
+        
+        $usuarios = $entidade->getUsuariosAlvo();
+        
+        foreach ($usuarios as $v) {
+            $p->setParameter(1, $id, PreparedStatement::INTEGER);
+            $p->setParameter(2, $v->getId(), PreparedStatement::INTEGER);
+            $p->execute();
+        }
 
-        // Pega o id gerado na sequence 
-        $p = $this->getConn()->query("select currval('aviso_id_seq') as id");
-        $p->next();
-        $array = $p->fetchArray();
-        
-        $entidade->setId($array['id']);
-        
-        
+        $entidade->setId($id);
     }
 
     public function executarUpdate(Entidade $entidade) {
-
-        $sql = "UPDATE aviso
-                   SET titulo            = $1
-                   WHERE id =$2";
-
-        $p = $this->getConn()->prepare($sql);
-
-        $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
-        $p->setParameter(2, $entidade->getId(), PreparedStatement::INTEGER);
-
-        $p->execute();
+        throw new Exception("Not implemented yet!");
     }
 
     public function executarDelete(Entidade $entidade) {
         $sql = " delete from      
-        departamento where id=$1";
+        aviso where id=$1";
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->execute();

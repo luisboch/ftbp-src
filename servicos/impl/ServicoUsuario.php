@@ -88,7 +88,21 @@ class ServicoUsuario extends ServicoBasico {
 
         return $this->usuarioDAO->login($email, $senha);
     }
-
+    
+    public function carregarTodosOsUsuarios(){
+        return $this->usuarioDAO->carregarTodosOsUsuarios();
+    }
+    
+    public function carregarResponsavelDepartamento($ids){
+        return $this->usuarioDAO->carregarResponsavelDepartamento($ids);
+    }
+    public function carregarUsuariosDepartamento($dep){
+        return $this->usuarioDAO->carregarUsuariosDepartamento($dep);
+    }
+    public function getByIds($ids){
+        return $this->usuarioDAO->getByIds($ids);
+    }
+    
 }
 
 ?>

@@ -5,13 +5,13 @@ require_once 'ftbp-src/entidades/Entidade.php';
 //require_once 'ftbp-src/entidades/Pesquisavel.php';
 require_once 'ftbp-src/daos/impl/DAOUtil.php';
 /*
- * Departamento.php
+ * Aviso.php
  */
 
 /**
- * Description of Departamento
+ * Description of Aviso
  *
- * @author Luis
+ * @author Felipe
  * @since Feb 27, 2013
  */
 class Aviso implements Entidade{//, Pesquisavel, Notificavel {
@@ -41,6 +41,19 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
      * @var DateTime
      */
     private $dataCriacao;
+    
+    /**
+     *
+     * @var array
+     */
+    private $usuariosAlvo = array();
+    
+    
+    /**
+     *
+     * @var Usuario 
+     */
+    private $criadoPor;
 
     public function getId() {
         return $this->id;
@@ -61,8 +74,15 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
     public function getDescricao() {
         return $this->descricao;
     }
+    public function getUsuariosAlvo() {
+        return $this->usuariosAlvo;
+    }
 
-    public function setDescricao($descricao) {
+    public function setUsuariosAlvo($usuariosAlvo) {
+        $this->usuariosAlvo = $usuariosAlvo;
+    }
+
+        public function setDescricao($descricao) {
         $this->descricao = $descricao;
     }
 
@@ -74,35 +94,13 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
     public function setDataCriacao($dataCriacao) {
         $this->dataCriacao = $dataCriacao;
     }
-
-    public function getData() {
-        return new DateTime();
+    
+    public function getCriadoPor() {
+        return $this->criadoPor;
     }
 
-    public function getDataExpiracao() {
-        return null;
-    }
-
-    public function getEntidade() {
-        return $this;
-    }
-
-
-    public function getNotificarEmail() {
-        return false;
-    }
-
-    public function getPalavrasChave() {
-        $arr = array();
-        if ($this->nome != '') {
-            $arr = explode(' ', $this->nome);
-        }
-        $arr[] = $this->id;
-        return $arr;
-    }
-
-    public function getTipo() {
-        return __CLASS__;
+    public function setCriadoPor(Usuario $criadoPor) {
+        $this->criadoPor = $criadoPor;
     }
 
 }

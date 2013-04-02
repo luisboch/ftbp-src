@@ -30,11 +30,21 @@ class ServicoAviso extends ServicoBasico{
             $v->addError('titulo aviso inválido ->  nome '. $entidade->getNome(), 'titulo');
         }
         
+        if(count($entidade->getUsuariosAlvo()) === 0){
+            $v->addError("Selecione ao menos um destinatário");
+        }
         
+        // Verifica se existe usuários duplicados na lista de usuarios alvo, se existir remove da lista.
+        $usuariosValidos = array();
         
-        //if($entidade->getDataCriacao() == null){
-          //  $entidade->setDataCriacao(new DateTime());
-        //}
+        foreach($entidade->getUsuariosAlvo() as $value){
+            if(!$this->usuarioExisteNaLista($usuariosValidos, $value)){
+                $usuariosValidos[] = $value;
+            }
+        }
+        
+        $entidade->setUsuariosAlvo($usuariosValidos);
+       
         
         if(!$v->isEmtpy()){
             throw $v;
@@ -46,6 +56,21 @@ class ServicoAviso extends ServicoBasico{
      */
     public function carregarAviso() {
         return $this->avisoDAO->carregarAviso();
+    }
+    
+    /**
+     *
+     * @param array $array
+     * @param Usuario $usuario 
+     * @return boolean
+     */
+    private function usuarioExisteNaLista($array,Usuario $usuario){
+        foreach ($array as $v) {
+            if($v->getId() === $usuario->getId()){
+                return true;
+            }
+        }
+        return false;
     }
 }
 

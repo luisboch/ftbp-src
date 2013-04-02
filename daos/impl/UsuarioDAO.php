@@ -232,7 +232,7 @@ class UsuarioDAO extends DAOBasico {
             
             $sql = "select *  
                  from usuarios
-                where responsável = true and departamento_id in (" . DAOUtil::listToString($ids) . ")";
+                where responsavel = true and departamento_id in (" . DAOUtil::listToString($ids) . ")";
 
             $rs = $this->getConn()->query($sql);
 
