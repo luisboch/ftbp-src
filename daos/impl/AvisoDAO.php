@@ -21,8 +21,8 @@ class AvisoDAO extends DAOBasico {
         $id = $arr['id'];
         
         $sql = "INSERT INTO aviso(
-                    id, titulo, descricao, data_criacao, usuario_id)
-                VALUES ($1,$2, $3, now(), $4)";
+                    id, titulo, descricao, data_criacao, usuario_id, excluida)
+                VALUES ($1,$2, $3, now(), $4, false)";
 
         $p = $this->getConn()->prepare($sql);
 
@@ -33,7 +33,7 @@ class AvisoDAO extends DAOBasico {
 
         $p->execute();
         
-        $sql = "insert into aviso_destinatario( aviso_id, usuario_id) values ($1, $2)";
+        $sql = "insert into aviso_destinatario( aviso_id, usuario_id, ativo) values ($1, $2, true)";
         
         $p = $this->getConn()->prepare($sql);
         
@@ -85,7 +85,7 @@ class AvisoDAO extends DAOBasico {
         $arr = $rs->fetchArray();
         $av = new Aviso();
         $av->setId($arr['id']);
-        //$dp->setNome($arr['nome']);
+        $av->setNome($arr['nome']);
         return $av;
     }
 
@@ -105,6 +105,40 @@ class AvisoDAO extends DAOBasico {
         while ($rs->next()) {
             $list[] = $this->montarAviso($rs);
         }
+        return $list;
+    }
+    
+    public function carregarUltimosAvisos(Usuario $usuario) {
+         
+        // Prepara a querie ordenando pela data decrescente
+        
+        $sql = "select av.id as id, av.titulo as nome
+                    from aviso av 
+                        join aviso_destinatario ad on av.id = ad.aviso_id
+                        left join usuarios usu on usu.id = ad.usuario_id
+                    where 
+                        ad.usuario_id = $1
+                        and av.excluida = false
+                        and ad.ativo = true
+                    order by av.id desc --limit 10";
+        
+        $p = $this->getConn()->prepare($sql);
+        
+        // Seta os parãmetros
+        $p->setParameter(1, $usuario->getId(), PreparedStatement::INTEGER);
+        
+        // Pega o resultado
+        $rs = $p->getResult();
+        
+        // Itera sobre o resultado
+        $list = array();
+        while($rs->next()){
+            
+            // Monta o objeto 
+            $list[] = $this->montarAviso($rs, $usuario);
+        }
+        
+        // Retorna a lista montada.
         return $list;
     }
 

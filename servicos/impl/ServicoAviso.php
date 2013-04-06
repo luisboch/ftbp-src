@@ -30,6 +30,10 @@ class ServicoAviso extends ServicoBasico{
             $v->addError('titulo aviso inválido ->  nome '. $entidade->getNome(), 'titulo');
         }
         
+        if($entidade->getDescricao() == ''){
+            $v->addError('Descrição aviso inválido ->  Descrição '. $entidade->getDescricao(), 'descricao');
+        }
+        
         if(count($entidade->getUsuariosAlvo()) === 0){
             $v->addError("Selecione ao menos um destinatário");
         }
@@ -71,6 +75,10 @@ class ServicoAviso extends ServicoBasico{
             }
         }
         return false;
+    }
+    
+    public function carregarUltimosAvisos(Usuario $usuario) {
+        return $this->avisoDAO->carregarUltimosAvisos($usuario);
     }
 }
 
