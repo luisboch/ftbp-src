@@ -20,36 +20,110 @@ class ChatDAO {
     function __construct() {
         $this->usuarioDAO = new UsuarioDAO();
         $this->usuarioDAO->connect();
+
+        // Checa se a pasta do chat existe, se existir ignora, se não tenta criar
+        // se encontrar problema barra.
+        if (!file_exists(APP_PATH . self::GLOBAL_PATH) ||
+                !is_dir(APP_PATH . self::GLOBAL_PATH)) {
+            if (mkdir(APP_PATH . self::GLOBAL_PATH) === false) {
+                throw new Exception("Can't create chat directory!");
+            }
+        }
     }
 
     /**
      * 
      * @param Usuario $from
-     * @param List<Usuario> $to
+     * @param Usuario $to
      * @param string $message
      */
-    public function enviarMensagem(Usuario $from, $to, $message) {
+    public function enviarMensagem(Usuario $from, Usuario $to, $message) {
+        $fromFile = APP_PATH . self::GLOBAL_PATH . $from->getId() . '/' . $to->getId() . '.xml';
+        $toFile = APP_PATH . self::GLOBAL_PATH . $to->getId() . '/' . $from->getId() . '.xml';
 
+        // Checa se o diretorio do usuário existe se não cria.
+        if (!file_exists(APP_PATH . self::GLOBAL_PATH . $from->getId()) ||
+                !is_dir(APP_PATH . self::GLOBAL_PATH . $from->getId())) {
+
+            if (mkdir(APP_PATH . self::GLOBAL_PATH . $from->getId()) === false) {
+                throw new Exception("Can't create chat directory to user " . $from->getId() . " !");
+            }
+        }
+
+        // Checa se o diretorio do usuário alvo existe se não cria.
+        if (!file_exists(APP_PATH . self::GLOBAL_PATH . $to->getId()) ||
+                !is_dir(APP_PATH . self::GLOBAL_PATH . $to->getId())) {
+
+            if (mkdir(APP_PATH . self::GLOBAL_PATH . $to->getId()) === false) {
+                throw new Exception("Can't create chat directory to user " . $to->getId() . " !");
+            }
+        }
+
+        // Cria a mensagen no Usuário que enviou a mensagem
+
+        $fromDom = new DOMDocument("1.0", 'UTF-8');
+
+        if (file_exists($fromFile)) {
+            $fromDom->load($fromFile);
+            $rootFrom = $fromDom->documentElement;
+        } else {
+            $rootFrom = $fromDom->createElement('root');
+            $fromDom->appendChild($rootFrom);
+        }
+
+        $data = new DateTime();
+
+        $msgNode = $rootFrom->appendChild(new DOMElement('mensagem'));
+
+        $msgNode->appendChild(new DOMElement('text', $message));
+        $msgNode->appendChild(new DOMElement('lido', 'true'));
+        $msgNode->appendChild(new DOMElement('usuario-id', $from->getId()));
+        $msgNode->appendChild(new DOMElement('timestamp', $data->getTimestamp()));
+        
+        $rootFrom->appendChild($msgNode);
+        
+        // Cria a mensagem no xml do usuário alvo
+        $toDom = new  DOMDocument("1.0", 'UTF-8');
+        
+        if (file_exists($toFile)) {
+            $toDom->load($toFile);
+            $rootTo = $toDom->documentElement;
+        } else {
+            $rootTo = $toDom->createElement('root');
+            $toDom->appendChild($rootTo);
+        }
+        
+        
+        $msgNode = $rootTo->appendChild(new DOMElement('mensagem'));
+
+        $msgNode->appendChild(new DOMElement('text', $message));
+        $msgNode->appendChild(new DOMElement('lido', 'false'));
+        $msgNode->appendChild(new DOMElement('usuario-id', $from->getId()));
+        $msgNode->appendChild(new DOMElement('timestamp', $data->getTimestamp()));
+        
+        $rootTo->appendChild($msgNode);
+        
+        $toDom->save($toFile);
+        $fromDom->save($fromFile);
+        
     }
 
     public function carregarUsuariosAtivos(Usuario $usuario) {
 
         $file = APP_PATH . self::GLOBAL_PATH . 'usuarios.xml';
-        
+
         $dom = new DOMDocument("1.0", 'UTF-8');
 
         /**
          * @var DOMElement
          */
         $root = null;
-        if (file_exists($file)) {
 
+        if (file_exists($file)) {
             $dom->load($file);
             $root = $dom->documentElement;
         } else {
-
             $root = $dom->createElement('root');
-
             $dom->appendChild($root);
         }
 
@@ -71,13 +145,12 @@ class ChatDAO {
             $id = $idNode->item(0)->nodeValue;
 
             if (((int) $id) == $usuario->getId()) {
-                
+
                 if ($userNode !== null) {
                     $root->removeChild($userNode);
                 }
-                
+
                 $userNode = $u;
-                
             } else {
 
                 // check if we need to remove item
@@ -122,6 +195,10 @@ class ChatDAO {
 
         return $this->usuarioDAO->getByIds($list);
     }
-
+    
+    public function carregarMensagens(Usuario $from, Usuario $to) {
+        
+    }
 }
+
 ?>

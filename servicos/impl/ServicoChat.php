@@ -35,12 +35,11 @@ class Chat {
     /**
      * 
      * @param Usuario $from
-     * @param List<Usuario> $to
+     * @param Usuario $to
      * @param string $message
      */
-    public function enviarMensagem(Usuario $from, $to, $message){
-        // from file
-        $file = "chat/users/".$from->getId()."/";
+    public function enviarMensagem(Usuario $from, Usuario $to, $message){
+        $this->chatDAO->enviarMensagem($from, $to, $message);
     }
 
      /**
