@@ -26,8 +26,8 @@ class ServicoAviso extends ServicoBasico{
     public function validar(Entidade $entidade) {
         $v = new ValidacaoExecao();
         
-        if($entidade->getNome() == ''){
-            $v->addError('titulo aviso inválido ->  nome '. $entidade->getNome(), 'titulo');
+        if($entidade->getTitulo() == ''){
+            $v->addError('titulo aviso inválido ->  titulo '. $entidade->getTitulo(), 'titulo');
         }
         
         if($entidade->getDescricao() == ''){

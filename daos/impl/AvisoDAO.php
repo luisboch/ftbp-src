@@ -27,7 +27,7 @@ class AvisoDAO extends DAOBasico {
         $p = $this->getConn()->prepare($sql);
 
         $p->setParameter(1, $id, PreparedStatement::INTEGER);
-        $p->setParameter(2, $entidade->getNome(), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getTitulo(), PreparedStatement::STRING);
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
         $p->setParameter(4, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
 
@@ -85,7 +85,8 @@ class AvisoDAO extends DAOBasico {
         $arr = $rs->fetchArray();
         $av = new Aviso();
         $av->setId($arr['id']);
-        $av->setNome($arr['nome']);
+        $av->setTitulo($arr['titulo']);
+        $av->setDescricao($arr['descricao']);
         return $av;
     }
 
@@ -112,7 +113,7 @@ class AvisoDAO extends DAOBasico {
          
         // Prepara a querie ordenando pela data decrescente
         
-        $sql = "select av.id as id, av.titulo as nome
+        $sql = "select av.id as id, av.titulo as titulo, av.descricao as descricao
                     from aviso av 
                         join aviso_destinatario ad on av.id = ad.aviso_id
                         left join usuarios usu on usu.id = ad.usuario_id
