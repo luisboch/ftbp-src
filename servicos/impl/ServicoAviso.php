@@ -80,6 +80,10 @@ class ServicoAviso extends ServicoBasico{
     public function carregarUltimosAvisos(Usuario $usuario) {
         return $this->avisoDAO->carregarUltimosAvisos($usuario);
     }
+    
+    public function avisoLido(Entidade $entidade, Usuario $usuario) {
+        return $this->avisoDAO->avisoLido($entidade, $usuario);
+    }
 }
 
 ?>
