@@ -41,24 +41,23 @@ class Chat {
     public function enviarMensagem(Usuario $from, Usuario $to, $message){
         $this->chatDAO->enviarMensagem($from, $to, $message);
     }
-
-     /**
-     *   
-     * @param string $message
-     * @param string $file arquivo a ser escrito
-     * @throws Exception Quando encontrar um problema ao escrever o arquivo
-     */
-    public function writeMessage($message, $file){
-         $fp = fopen($file, 'a+'); 
-         if($fp === false){
-             throw new Exception("Falha ao abrir/criar arquivo [$file]");
-         }
-         fwrite($fp, $message."\n");
-         fclose($fp);
-    }
     
+    /**
+     * 
+     * @return array
+     */
     public function carregarUsuariosAtivos() {
         return $this->chatDAO->carregarUsuariosAtivos($this->session->getUsuario());
+    }
+    
+    /**
+     * 
+     * @param Usuario $from
+     * @param Usuario $to
+     * @return array
+     */
+    public function carregarMensagens(Usuario $from, Usuario $to) {
+        return $this->chatDAO->carregarMensagens($from, $to);
     }
     
     

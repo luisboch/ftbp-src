@@ -1,6 +1,7 @@
 <?php
 
 require_once 'ftbp-src/daos/impl/UsuarioDAO.php';
+require_once 'ftbp-src/daos/impl/ChatMensagem.php';
 
 /**
  * Description of ChatDAO
@@ -75,16 +76,16 @@ class ChatDAO {
 
         $msgNode = $rootFrom->appendChild(new DOMElement('mensagem'));
 
-        $msgNode->appendChild(new DOMElement('text', $message));
+        $msgNode->appendChild(new DOMElement('texto', $message));
         $msgNode->appendChild(new DOMElement('lido', 'true'));
         $msgNode->appendChild(new DOMElement('usuario-id', $from->getId()));
         $msgNode->appendChild(new DOMElement('timestamp', $data->getTimestamp()));
-        
+
         $rootFrom->appendChild($msgNode);
-        
+
         // Cria a mensagem no xml do usuário alvo
-        $toDom = new  DOMDocument("1.0", 'UTF-8');
-        
+        $toDom = new DOMDocument("1.0", 'UTF-8');
+
         if (file_exists($toFile)) {
             $toDom->load($toFile);
             $rootTo = $toDom->documentElement;
@@ -92,20 +93,19 @@ class ChatDAO {
             $rootTo = $toDom->createElement('root');
             $toDom->appendChild($rootTo);
         }
-        
-        
+
+
         $msgNode = $rootTo->appendChild(new DOMElement('mensagem'));
 
         $msgNode->appendChild(new DOMElement('text', $message));
         $msgNode->appendChild(new DOMElement('lido', 'false'));
         $msgNode->appendChild(new DOMElement('usuario-id', $from->getId()));
         $msgNode->appendChild(new DOMElement('timestamp', $data->getTimestamp()));
-        
+
         $rootTo->appendChild($msgNode);
-        
+
         $toDom->save($toFile);
         $fromDom->save($fromFile);
-        
     }
 
     public function carregarUsuariosAtivos(Usuario $usuario) {
@@ -195,10 +195,53 @@ class ChatDAO {
 
         return $this->usuarioDAO->getByIds($list);
     }
-    
-    public function carregarMensagens(Usuario $from, Usuario $to) {
-        
-    }
-}
 
+    /**
+     * 
+     * @param Usuario $from
+     * @param Usuario $to
+     * @return array
+     */
+    public function carregarMensagens(Usuario $from, Usuario $to) {
+
+        $file = APP_PATH . self::GLOBAL_PATH . $from->getId() . '/' . $to->getId() . '.xml';
+
+        $dom = new DOMDocument("1.0", 'UTF-8');
+
+        $msgs = array();
+
+        if (!file_exists($file)) {
+            return $msgs;
+        }
+
+        $dom->load($file);
+
+        $mensagens = $dom->getElementsByTagName('mensagem');
+
+        for ($i = 0; $i < $mensagens->length; $i++) {
+
+            $m = $mensagens->item($i);
+
+            $usrIdNode = $m->getElementsByTagName('usuario-id');
+            $usrId = $usrIdNode->item(0)->nodeValue;
+
+            $lidoNode = $m->getElementsByTagName('lido');
+            $lido = $lidoNode->item(0)->nodeValue;
+
+            $textoNode = $m->getElementsByTagName('texto');
+            $texto = $textoNode->item(0)->nodeValue;
+
+            $dataNode = $m->getElementsByTagName('timestamp');
+            $dataVal = $dataNode->item(0)->nodeValue;
+
+            $data = new DateTime();
+            $data->setTimestamp($dataVal);
+
+            $msgs[] = new ChatMensagem(($usrId == $from->getId() ? $from : $to), $texto, $lido, $data);
+        }
+        
+        return $msgs;
+    }
+
+}
 ?>
