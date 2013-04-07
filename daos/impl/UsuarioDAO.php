@@ -225,57 +225,61 @@ class UsuarioDAO extends DAOBasico {
      * @throws NoResultException
      */
     public function carregarResponsavelDepartamento($ids = array()) {
-        
+
         $list = array();
-        
+
         if (isset($ids) && is_array($ids) && count($ids) > 0) {
-            
+
             $sql = "select *  
                  from usuarios
                 where responsavel = true and departamento_id in (" . DAOUtil::listToString($ids) . ")";
 
             $rs = $this->getConn()->query($sql);
 
-            while ($rs->next()){
+            while ($rs->next()) {
                 $list[] = $this->montarUsuario($rs);
             }
         }
-        
+
         return $list;
     }
-    
+
     public function carregarTodosOsUsuarios() {
 
         $list = array();
-        
-        
+
+
         $sql = "select *  
                  from usuarios";
 
         $rs = $this->getConn()->query($sql);
 
-        while ($rs->next()){
+        while ($rs->next()) {
             $list[] = $this->montarUsuario($rs);
         }
         return $list;
     }
-    
-    public function carregarUsuariosDepartamento($dep){
-        
-        $list = array();
-        
-        $sql = "select *  
-                 from usuarios
-                 where departamento_id in (".DAOUtil::listToString($dep).")";
-        
-        $rs = $this->getConn()->query($sql);
 
-        while ($rs->next()){
-            $list[] = $this->montarUsuario($rs);
+    public function carregarUsuariosDepartamento($dep) {
+
+        $list = array();
+
+        if (isset($dep) && is_array($dep) && count($dep) > 0) {
+
+            $sql = "select *  
+                 from usuarios
+                 where departamento_id in (" . DAOUtil::listToString($dep) . ")";
+
+            $rs = $this->getConn()->query($sql);
+
+            while ($rs->next()) {
+                $list[] = $this->montarUsuario($rs);
+            }
+            
         }
         return $list;
     }
-    
+
 }
 
 ?>
