@@ -95,6 +95,7 @@ class AvisoDAO extends DAOBasico {
         $av->setId($arr['id']);
         $av->setTitulo($arr['titulo']);
         $av->setDescricao($arr['descricao']);
+        $av->setLido($arr['lido']);
         $av->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
         $av->setCriadoPor(new Usuario());
         $av->getCriadoPor()->setNome($arr['criadopor']);
@@ -130,15 +131,16 @@ class AvisoDAO extends DAOBasico {
                     avi.descricao as descricao, 
                     ad.usuario_id as id_destino,
                     avi.id as id,
-                    avi.data_criacao as data_criacao
+                    avi.data_criacao as data_criacao,
+                    ad.ativo as lido
                     from usuarios usu
                         join aviso avi on usu.id = avi.usuario_id
                         inner join aviso_destinatario ad on avi.id =  ad.aviso_id
                     where 
                         ad.usuario_id = $1
                         and avi.excluida = false
-                        and ad.ativo = true
-                    order by avi.id desc --limit 10";
+                        --and ad.ativo = true
+                    order by avi.id desc limit 10";
         
         $p = $this->getConn()->prepare($sql);
         

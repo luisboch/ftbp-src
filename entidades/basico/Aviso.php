@@ -48,6 +48,10 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
      */
     private $usuariosAlvo = array();
     
+    /**
+     * @var boolean
+     */
+    private $lido;
     
     /**
      *
@@ -82,10 +86,9 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
         $this->usuariosAlvo = $usuariosAlvo;
     }
 
-        public function setDescricao($descricao) {
+    public function setDescricao($descricao) {
         $this->descricao = $descricao;
     }
-
     
     public function getDataCriacao() {
         return $this->dataCriacao;
@@ -102,6 +105,15 @@ class Aviso implements Entidade{//, Pesquisavel, Notificavel {
     public function setCriadoPor(Usuario $criadoPor) {
         $this->criadoPor = $criadoPor;
     }
+
+    public function getLido() {
+        return $this->lido;
+    }
+
+    public function setLido($lido) {
+        $this->lido = $lido;
+    }
+
 
 }
 
