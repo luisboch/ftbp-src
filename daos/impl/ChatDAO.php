@@ -97,7 +97,7 @@ class ChatDAO {
 
         $msgNode = $rootTo->appendChild(new DOMElement('mensagem'));
 
-        $msgNode->appendChild(new DOMElement('text', $message));
+        $msgNode->appendChild(new DOMElement('texto', $message));
         $msgNode->appendChild(new DOMElement('lido', 'false'));
         $msgNode->appendChild(new DOMElement('usuario-id', $from->getId()));
         $msgNode->appendChild(new DOMElement('timestamp', $data->getTimestamp()));
