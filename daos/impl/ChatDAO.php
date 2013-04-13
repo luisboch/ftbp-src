@@ -227,7 +227,9 @@ class ChatDAO {
 
             $lidoNode = $m->getElementsByTagName('lido');
             $lido = $lidoNode->item(0)->nodeValue;
-
+            
+            $lidoNode->item(0)->nodeValue = 'true';
+            
             $textoNode = $m->getElementsByTagName('texto');
             $texto = $textoNode->item(0)->nodeValue;
 
@@ -240,8 +242,46 @@ class ChatDAO {
             $msgs[] = new ChatMensagem(($usrId == $from->getId() ? $from : $to), $texto, $lido, $data);
         }
         
+        // Save all changes on file
+        $dom->save($file);
+        
         return $msgs;
     }
 
+    /**
+     * Verfica se existe mensagem para o usuário.
+     * @param Usuario $from
+     * @param Usuario $to
+     * @return boolean true se existe, false se não.
+     */
+    public function  existeMensagem(Usuario $from,Usuario $to) {
+        $file = APP_PATH . self::GLOBAL_PATH . $from->getId() . '/' . $to->getId() . '.xml';
+
+        $dom = new DOMDocument("1.0", 'UTF-8');
+
+        $msgs = array();
+
+        if (!file_exists($file)) {
+            return false;
+        }
+
+        $dom->load($file);
+
+        $mensagens = $dom->getElementsByTagName('mensagem');
+
+        for ($i = 0; $i < $mensagens->length; $i++) {
+
+            $m = $mensagens->item($i);
+
+            $lidoNode = $m->getElementsByTagName('lido');
+            $lido = $lidoNode->item(0)->nodeValue;
+            if($lido === 'false'){
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
 }
 ?>

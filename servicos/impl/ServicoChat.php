@@ -60,6 +60,15 @@ class Chat {
         return $this->chatDAO->carregarMensagens($from, $to);
     }
     
+    /**
+     * Verfica se existe mensagem para o usuário.
+     * @param Usuario $from
+     * @param Usuario $to
+     * @return boolean true se existe, false se não.
+     */
+    public function  existeMensagem(Usuario $from,Usuario $to){
+        return $this->chatDAO->existeMensagem($from, $to);
+    }
     
 }
 
