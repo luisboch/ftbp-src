@@ -227,9 +227,9 @@ class ChatDAO {
 
             $lidoNode = $m->getElementsByTagName('lido');
             $lido = $lidoNode->item(0)->nodeValue;
-            
+
             $lidoNode->item(0)->nodeValue = 'true';
-            
+
             $textoNode = $m->getElementsByTagName('texto');
             $texto = $textoNode->item(0)->nodeValue;
 
@@ -241,10 +241,10 @@ class ChatDAO {
 
             $msgs[] = new ChatMensagem(($usrId == $from->getId() ? $from : $to), $texto, $lido, $data);
         }
-        
+
         // Save all changes on file
         $dom->save($file);
-        
+
         return $msgs;
     }
 
@@ -254,7 +254,7 @@ class ChatDAO {
      * @param Usuario $to
      * @return boolean true se existe, false se não.
      */
-    public function  existeMensagem(Usuario $from,Usuario $to) {
+    public function existeMensagem(Usuario $from, Usuario $to) {
         $file = APP_PATH . self::GLOBAL_PATH . $from->getId() . '/' . $to->getId() . '.xml';
 
         $dom = new DOMDocument("1.0", 'UTF-8');
@@ -275,13 +275,50 @@ class ChatDAO {
 
             $lidoNode = $m->getElementsByTagName('lido');
             $lido = $lidoNode->item(0)->nodeValue;
-            if($lido === 'false'){
+            if ($lido === 'false') {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
+    public function logout(Usuario $usuario) {
+
+        $file = APP_PATH . self::GLOBAL_PATH . 'usuarios.xml';
+
+        $dom = new DOMDocument("1.0", 'UTF-8');
+
+        /**
+         * @var DOMElement
+         */
+        $root = null;
+
+        if (file_exists($file)) {
+            $dom->load($file);
+            $root = $dom->documentElement;
+        } else {
+            $root = $dom->createElement('root');
+            $dom->appendChild($root);
+        }
+
+        $usuarios = $dom->getElementsByTagName('usuario');
+
+        for ($i = 0; $i < $usuarios->length; $i++) {
+            $u = $usuarios->item($i);
+
+            $idNode = $u->getElementsByTagName('id');
+            $id = $idNode->item(0)->nodeValue;
+
+            if (((int) $id) == $usuario->getId()) {
+                
+                $root->removeChild($u);
+                $dom->save($file);
+                return;
+            }
+        }
+    }
+
 }
+
 ?>

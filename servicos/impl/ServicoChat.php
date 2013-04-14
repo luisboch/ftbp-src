@@ -70,6 +70,10 @@ class Chat {
         return $this->chatDAO->existeMensagem($from, $to);
     }
     
+    public function logout() {
+        $this->chatDAO->logout($this->session->getUsuario());
+    }
+    
 }
 
 ?>
