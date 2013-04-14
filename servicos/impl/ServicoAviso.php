@@ -58,8 +58,8 @@ class ServicoAviso extends ServicoBasico{
      * 
      * @return array
      */
-    public function carregarAviso() {
-        return $this->avisoDAO->carregarAviso();
+    public function carregarAviso(Entidade $entidade) {
+        return $this->avisoDAO->carregarAviso($entidade);
     }
     
     /**
@@ -83,6 +83,14 @@ class ServicoAviso extends ServicoBasico{
     
     public function avisoLido(Entidade $entidade, Usuario $usuario) {
         return $this->avisoDAO->avisoLido($entidade, $usuario);
+    }
+    
+    /**
+     * 
+     * @return array
+     */
+    public function carregarMeusAviso(Entidade $entidade) {
+        return $this->avisoDAO->carregarMeusAviso($entidade);
     }
 }
 

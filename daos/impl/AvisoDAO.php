@@ -35,7 +35,7 @@ class AvisoDAO extends DAOBasico {
 
         $p->execute();
         
-        $sql = "insert into aviso_destinatario( aviso_id, usuario_id, ativo) values ($1, $2, true)";
+        $sql = "insert into aviso_destinatario( aviso_id, usuario_id, lido, excluida) values ($1, $2, false, false)";
         
         $p = $this->getConn()->prepare($sql);
         
@@ -106,18 +106,41 @@ class AvisoDAO extends DAOBasico {
      * 
      * @return array
      */
-    public function carregarAviso() {
+    public function carregarAviso(Entidade $entidade) {
         
-        $sql = "select *  
-                  from aviso
+        $sql = "select usu.nome as criadopor, 
+                    avi.titulo as titulo, 
+                    avi.descricao as descricao, 
+                    ad.usuario_id as id_destino,
+                    avi.id as id,
+                    avi.data_criacao as data_criacao,
+                    ad.lido as lido
+                    from usuarios usu
+                        join aviso avi on usu.id = avi.usuario_id
+                        inner join aviso_destinatario ad on avi.id =  ad.aviso_id
+                    where 
+                        ad.usuario_id = $1
+                        and avi.excluida = false
+                    order by avi.id desc
               ";
         
-        $rs = $this->getConn()->query($sql);
+        $p = $this->getConn()->prepare($sql);
         
+        // Seta os parãmetros
+        $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
+        
+        // Pega o resultado
+        $rs = $p->getResult();
+        
+        // Itera sobre o resultado
         $list = array();
-        while ($rs->next()) {
-            $list[] = $this->montarAviso($rs);
+        while($rs->next()){
+            
+            // Monta o objeto 
+            $list[] = $this->montarAviso($rs, $usuario);
         }
+        
+        // Retorna a lista montada.
         return $list;
         
     }
@@ -132,7 +155,7 @@ class AvisoDAO extends DAOBasico {
                     ad.usuario_id as id_destino,
                     avi.id as id,
                     avi.data_criacao as data_criacao,
-                    ad.ativo as lido
+                    ad.lido as lido
                     from usuarios usu
                         join aviso avi on usu.id = avi.usuario_id
                         inner join aviso_destinatario ad on avi.id =  ad.aviso_id
@@ -163,7 +186,7 @@ class AvisoDAO extends DAOBasico {
     }
     
     public function avisoLido(Entidade $entidade, Usuario $usuario){
-        $sql = "update aviso_destinatario set ativo = false 
+        $sql = "update aviso_destinatario set lido = true 
                     where aviso_id=$1
                         and usuario_id = $2";
         
@@ -172,7 +195,41 @@ class AvisoDAO extends DAOBasico {
         $p->setParameter(2, $usuario->getId(), PreparedStatement::INTEGER);
         $p->execute();
     }
-
+    
+    public function carregarMeusAviso(Entidade $entidade) {
+        
+        $sql = "select usu.nome as criadopor,
+                    av.titulo as titulo, 
+                    av.descricao as descricao,
+                    av.data_criacao as data_criacao,
+                    av.id as id
+                    from usuarios usu
+                        join aviso av on av.usuario_id = usu.id
+                    where 
+                        av.usuario_id= $1
+                        and av.excluida = false
+                        order by av.id desc
+              ";
+        
+        $p = $this->getConn()->prepare($sql);
+        
+        // Seta os parãmetros
+        $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
+        
+        // Pega o resultado
+        $rs = $p->getResult();
+        
+        // Itera sobre o resultado
+        $list = array();
+        while($rs->next()){
+            
+            // Monta o objeto 
+            $list[] = $this->montarAviso($rs, $usuario);
+        }
+        
+        // Retorna a lista montada.
+        return $list;
+        
+    }
 }
-
 ?>
