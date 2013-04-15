@@ -85,6 +85,10 @@ class ServicoAviso extends ServicoBasico{
         return $this->avisoDAO->avisoLido($entidade, $usuario);
     }
     
+    public function deletarAvisoDestinatario(Entidade $entidade, Usuario $usuario) {
+        return $this->avisoDAO->deletarAvisoDestinatario($entidade, $usuario);
+    }
+    
     /**
      * 
      * @return array

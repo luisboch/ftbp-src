@@ -55,8 +55,8 @@ class AvisoDAO extends DAOBasico {
     }
 
     public function executarDelete(Entidade $entidade) {
-        $sql = " delete from      
-        aviso where id=$1";
+        $sql = " update aviso set excluida = true
+                    where id=$1";
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->execute();
@@ -121,6 +121,7 @@ class AvisoDAO extends DAOBasico {
                     where 
                         ad.usuario_id = $1
                         and avi.excluida = false
+                        and ad.excluida = false
                     order by avi.id desc
               ";
         
@@ -162,7 +163,6 @@ class AvisoDAO extends DAOBasico {
                     where 
                         ad.usuario_id = $1
                         and avi.excluida = false
-                        --and ad.ativo = true
                     order by avi.id desc limit 10";
         
         $p = $this->getConn()->prepare($sql);
@@ -229,7 +229,17 @@ class AvisoDAO extends DAOBasico {
         
         // Retorna a lista montada.
         return $list;
+    }
+    
+    public function deletarAvisoDestinatario(Entidade $entidade, Usuario $usuario){
+        $sql = "update aviso_destinatario set excluida = true 
+                    where aviso_id=$1
+                        and usuario_id = $2";
         
+        $p = $this->getConn()->prepare($sql);
+        $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(2, $usuario->getId(), PreparedStatement::INTEGER);
+        $p->execute();
     }
 }
 ?>
