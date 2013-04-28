@@ -24,7 +24,7 @@ class ValidacaoExecao extends Exception {
 
     /**
      *
-     * @return List<ErroValidacao>
+     * @return ErroValidacao[]
      */
     public function getErrors() {
         return $this->errors;

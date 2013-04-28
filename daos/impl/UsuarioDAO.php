@@ -130,7 +130,7 @@ class UsuarioDAO extends DAOBasico {
      * @param ResultSet $rs
      * @return Usuario
      */
-    private function montarUsuario(ResultSet $rs) {
+    public function montarUsuario(ResultSet $rs) {
         $arr = $rs->fetchArray();
 
         $u = new UsuarioLazy($this);

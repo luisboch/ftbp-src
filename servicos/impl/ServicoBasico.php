@@ -15,6 +15,10 @@ require_once 'ftbp-src/servicos/execoes/AcessoExecao.php';
  */
 abstract class ServicoBasico implements EntidadeServico {
 
+    const CRIACAO = 'CRIAÇAO';
+    const ATUALIZACAO = 'ATUALIZAÇÃO';
+
+
     /**
      * @var type 
      */
@@ -37,6 +41,9 @@ abstract class ServicoBasico implements EntidadeServico {
      * @var DAOBasico
      */
     protected $dao;
+
+    protected $stado;
+
 
     /**
      * 
@@ -70,6 +77,8 @@ abstract class ServicoBasico implements EntidadeServico {
     public function inserir(Entidade $entidade, $autoCommit = true) {
         $this->checarAcesso();
 
+        $this->stado = self::CRIACAO;
+        
         $this->validar($entidade);
 
         try {
@@ -119,6 +128,8 @@ abstract class ServicoBasico implements EntidadeServico {
 
         $this->checarAcesso();
 
+        $this->stado = self::ATUALIZACAO;
+        
         $this->validar($entidade);
 
         try {
