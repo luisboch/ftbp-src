@@ -2,17 +2,17 @@
 
 require_once 'ftbp-src/daos/EntidadeDAO.php';
 require_once 'ftbp-src/daos/impl/DAOUtil.php';
-require_once 'ftbp-src/entidades/basico/Aviso.php';
-require_once 'ftbp-src/entidades/basico/Usuario.php';
+require_once 'ftbp-src/entidades/basico/Curso.php';
+//require_once 'ftbp-src/entidades/basico/Usuario.php';
 require_once 'DAOBasico.php';
 
 
 
-class AvisoDAO extends DAOBasico {
+class CursoDAO extends DAOBasico {
 
     public function executarInsert(Entidade $entidade) {
         
-        $sql = "select nextval('aviso_id_seq') as id";
+        $sql = "select nextval('curso_id_seq') as id";
         
         $rs = $this->getConn()->query($sql);
         
@@ -22,38 +22,40 @@ class AvisoDAO extends DAOBasico {
         
         $id = $arr['id'];
         
-        $sql = "INSERT INTO aviso(
-                    id, titulo, descricao, data_criacao, usuario_id, excluida)
-                VALUES ($1,$2, $3, now(), $4, false)";
+        $sql = "INSERT INTO curso(
+                        id, nome, descricao, data_vestibular, coordenador, email, corpo_docente, 
+                        publico_alvo, valor, duracao, videoapres, areacurso_id, nivelgraduacao, 
+                        contatosecretaria, excluida, nao_sei)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)";
 
         $p = $this->getConn()->prepare($sql);
 
         $p->setParameter(1, $id, PreparedStatement::INTEGER);
-        $p->setParameter(2, $entidade->getTitulo(), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
-        $p->setParameter(4, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-
+        $p->setParameter(4, $entidade->getDataVestibular(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(6, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(7, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(8, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(9, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(10, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(11, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(12, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(13, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(14, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(15, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(16, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        
         $p->execute();
         
-        $sql = "insert into aviso_destinatario( aviso_id, usuario_id, lido, excluida) values ($1, $2, false, false)";
-        
-        $p = $this->getConn()->prepare($sql);
-        
-        $usuarios = $entidade->getUsuariosAlvo();
-        
-        foreach ($usuarios as $v) {
-            $p->setParameter(1, $id, PreparedStatement::INTEGER);
-            $p->setParameter(2, $v->getId(), PreparedStatement::INTEGER);
-            $p->execute();
-        }
-
         $entidade->setId($id);
     }
 
     public function executarUpdate(Entidade $entidade) {
         throw new Exception("Not implemented yet!");
     }
-
+    
     public function executarDelete(Entidade $entidade) {
         $sql = " update aviso set excluida = true
                     where id=$1";
@@ -242,5 +244,6 @@ class AvisoDAO extends DAOBasico {
         $p->setParameter(2, $usuario->getId(), PreparedStatement::INTEGER);
         $p->execute();
     }
+
 }
 ?>
