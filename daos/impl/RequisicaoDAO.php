@@ -177,12 +177,19 @@ class RequisicaoDAO extends DAOBasico {
      * @param Usuario $usuario
      * @return Requisicao[]
      */
-    public function getByUsuario(Usuario $usuario) {
+    public function getByUsuario(Usuario $usuario, $limit = null) {
         
-        $sql = "select * from requisicoes where usuario_id = $1";
+        $sql = "select *
+                  from requisicoes 
+                 where usuario_id = $1
+                 ".($limit !== null?'limit $2':'');
         
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, $usuario->getId(), PreparedStatement::INTEGER);
+        
+        if($limit!==null){
+            $p->setParameter(2, $limit, PreparedStatement::INTEGER);
+        }
         
         $rs = $p->getResult();
         

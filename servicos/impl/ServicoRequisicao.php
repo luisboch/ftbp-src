@@ -15,8 +15,15 @@ require_once 'ftbp-src/session/SessionManager.php';
  */
 class ServicoRequisicao extends ServicoBasico {
     
+    /**
+     *
+     * @var RequisicaoDAO
+     */
+    
+    private $requisicaoDAO;
     function __construct() {
         parent::__construct(new RequisicaoDAO());
+        $this->requisicaoDAO = $this->dao;
     }
 
     
@@ -66,6 +73,29 @@ class ServicoRequisicao extends ServicoBasico {
             throw $v;
         }
     }    
+    /**
+     * @param Usuario $usuario
+     * @return Requisicao[]
+     */
+    public function getByUsuario(Usuario $usuario, $limit = null) {
+        return $this->requisicaoDAO->getByUsuario($usuario, $limit);
+    }
+    
+    /**
+     * @param Usuario $usuario
+     * @return Requisicao[]
+     */
+    public function getByCriador(Usuario $usuario) {
+        return $this->requisicaoDAO->getByCriador($usuario);
+    }
+    
+    /**
+     * @param Usuario $usuario
+     * @return Requisicao[]
+     */
+    public function carregarUltimasRequisicoes(Usuario $usuario) {
+        return $this->requisicaoDAO->getByUsuario($usuario, 10);
+    }
 }
 
 ?>
