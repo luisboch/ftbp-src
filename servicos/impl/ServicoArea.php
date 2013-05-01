@@ -37,7 +37,15 @@ class ServicoArea extends ServicoBasico{
         if(!$v->isEmtpy()){
             throw $v;
         }
-    }    
+    }   
+    
+   /**
+     * 
+     * @return array
+     */
+    public function carregarArea() {
+        return $this->deparamentoDAO->carregarArea();
+    }
 }
 
 ?>

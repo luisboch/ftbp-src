@@ -26,26 +26,28 @@ class CursoDAO extends DAOBasico {
                         id, nome, descricao, data_vestibular, coordenador, email, corpo_docente, 
                         publico_alvo, valor, duracao, videoapres, areacurso_id, nivelgraduacao, 
                         contatosecretaria, excluida, nao_sei)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)";
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, false, '246924')";
 
         $p = $this->getConn()->prepare($sql);
 
         $p->setParameter(1, $id, PreparedStatement::INTEGER);
         $p->setParameter(2, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
-        $p->setParameter(4, $entidade->getDataVestibular(), PreparedStatement::INTEGER);
-        $p->setParameter(5, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(6, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(7, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(8, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(9, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(10, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(11, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(12, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(13, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(14, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(15, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
-        $p->setParameter(16, $entidade->getCriadoPor()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(4, $entidade->getDataVestibular(), PreparedStatement::STRING);
+        $p->setParameter(5, $entidade->getCoordenador(), PreparedStatement::STRING);
+        $p->setParameter(6, $entidade->getEmail(), PreparedStatement::STRING);
+        $p->setParameter(7, $entidade->getCorpoDocente(), PreparedStatement::STRING);
+        $p->setParameter(8, $entidade->getPublicoAlvo(), PreparedStatement::STRING);
+        $p->setParameter(9, $entidade->getValor(), PreparedStatement::DOUBLE);
+        $p->setParameter(10, $entidade->getDuracao(), PreparedStatement::DOUBLE);
+        //$p->setParameter(11, $entidade->getVideoApresentacao(), PreparedStatement::STRING);
+        $p->setParameter(11, 'xxxtubexxx', PreparedStatement::STRING);
+        //arrumar o getareacurso para objeto
+        $p->setParameter(12, $entidade->getAreaCurso(), PreparedStatement::INTEGER);
+        $p->setParameter(13, $entidade->getNivelGraduacao(), PreparedStatement::STRING);
+        $p->setParameter(14, $entidade->getContatoSecretaria(), PreparedStatement::STRING);
+        //$p->setParameter(15, 0, PreparedStatement::INTEGER);
+        //$p->setParameter(16, 'não sei', PreparedStatement::STRING);
         
         $p->execute();
         

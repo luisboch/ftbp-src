@@ -87,6 +87,25 @@ class AreaDAO extends DAOBasico {
 
         return $dp;
     }
+    
+    public function carregarArea(){
+        $sql = "select *  
+                 from area_curso";
+
+        $p = $this->getConn()->prepare($sql);
+        
+        $rs = $p->getResult();
+
+        $list = array();
+        while($rs->next()){
+            
+            // Monta o objeto 
+            $list[] = $this->montarArea($rs);
+        }
+        
+        // Retorna a lista montada.
+        return $list;
+    }
 
 }
 
