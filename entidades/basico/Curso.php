@@ -106,9 +106,9 @@ class Curso implements Entidade{
     
     /**
      *
-     * @return String
+     * @return Int
      */
-    private $nao_sei;
+    private $credito;
     
     public function getDescricao() {
         return $this->descricao;
@@ -134,12 +134,12 @@ class Curso implements Entidade{
         $this->excluida = $excluida;
     }
 
-    public function getNao_sei() {
-        return $this->nao_sei;
+    public function getCredito() {
+        return $this->credito;
     }
 
-    public function setNao_sei($nao_sei) {
-        $this->nao_sei = $nao_sei;
+    public function setCredito($credito) {
+        $this->credito = $credito;
     }
 
         
