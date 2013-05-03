@@ -98,7 +98,7 @@ class CursoDAO extends DAOBasico {
         $rs = $p->getResult();
 
         if (!$rs->next()) {
-            throw new NoResultException("Aviso não encontrado");
+            throw new NoResultException("Curso não encontrado");
         }
 
         return $this->montarCurso($rs);
@@ -115,17 +115,16 @@ class CursoDAO extends DAOBasico {
         $cr->setId($arr['id']);
         $cr->setNome($arr['nome']);
         $cr->setDescricao($arr['descricao']);
-        $cr->setAreaCurso($arr['areaCurso']);
-        $cr->setContatoSecretaria($arr['contatoSecretaria']);
+        $cr->setAreaCurso($arr['areacurso_id']);
+        $cr->setContatoSecretaria($arr['contatosecretaria']);
         $cr->setCoordenador($arr['coordenador']);
-        $cr->setCorpoDocente($arr["corpoDocente"]);
-        $cr->setDataVestibular($arr["dataVestibular"]);
-        $cr->setDescricao($arr['descricao']);
+        $cr->setCorpoDocente($arr["corpo_docente"]);
+        $cr->setDataVestibular(DAOUtil::toDateTime($arr["data_vestibular"]));
         $cr->setDuracao($arr['duracao']);
-        $cr->setNivelGraduacao($arr['nivelGraduacao']);
-        $cr->setPublicoAlvo($arr['publicoAlvo']);
+        $cr->setNivelGraduacao($arr['nivelgraduacao']);
+        $cr->setPublicoAlvo($arr['publico_alvo']);
         $cr->setValor($arr['valor']);
-        $cr->setVideoApresentacao($arr['videoApresentacao']);
+        $cr->setVideoApresentacao($arr['videoapres']);
         $cr->setEmail($arr['email']);
         return $cr;
     }
@@ -134,29 +133,14 @@ class CursoDAO extends DAOBasico {
      * 
      * @return array
      */
-    public function carregarAviso(Entidade $entidade) {
+    public function carregarCurso() {
 
-        $sql = "select usu.nome as criadopor, 
-                    avi.titulo as titulo, 
-                    avi.descricao as descricao, 
-                    ad.usuario_id as id_destino,
-                    avi.id as id,
-                    avi.data_criacao as data_criacao,
-                    ad.lido as lido
-                    from usuarios usu
-                        join aviso avi on usu.id = avi.usuario_id
-                        inner join aviso_destinatario ad on avi.id =  ad.aviso_id
-                    where 
-                        ad.usuario_id = $1
-                        and avi.excluida = false
-                        and ad.excluida = false
-                    order by avi.id desc
-              ";
+        $sql = "SELECT id, nome, descricao, data_vestibular, coordenador, email, corpo_docente, 
+                        publico_alvo, valor, duracao, videoapres, areacurso_id, nivelgraduacao, 
+                        contatosecretaria, excluida, credito
+                    FROM curso";
 
         $p = $this->getConn()->prepare($sql);
-
-        // Seta os parãmetros
-        $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
 
         // Pega o resultado
         $rs = $p->getResult();
@@ -166,7 +150,7 @@ class CursoDAO extends DAOBasico {
         while ($rs->next()) {
 
             // Monta o objeto 
-            $list[] = $this->montarAviso($rs, $usuario);
+            $list[] = $this->montarCurso($rs);
         }
 
         // Retorna a lista montada.

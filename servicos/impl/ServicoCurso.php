@@ -14,7 +14,7 @@ require_once 'ftbp-src/daos/impl/CursoDAO.php';
 class ServicoCurso extends ServicoBasico{
     
     /**
-     * @var AvisoDAO
+     * @var CursoDAO
      */
     private $cursoDAO;
     
@@ -38,6 +38,10 @@ class ServicoCurso extends ServicoBasico{
             throw $v;
         }
         
+    }
+    
+    public function carregarCurso(){
+        return $this->cursoDAO->carregarCurso();
     }
     
 }
