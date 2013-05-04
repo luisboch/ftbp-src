@@ -119,13 +119,15 @@ class CursoDAO extends DAOBasico {
         $cr->setContatoSecretaria($arr['contatosecretaria']);
         $cr->setCoordenador($arr['coordenador']);
         $cr->setCorpoDocente($arr["corpo_docente"]);
-        $cr->setDataVestibular(DAOUtil::toDateTime($arr["data_vestibular"]));
+        //$cr->setDataVestibular(DAOUtil::toDateTime($arr["data_vestibular"]));
+        $cr->setDataVestibular($arr["data_vestibular"]);
         $cr->setDuracao($arr['duracao']);
         $cr->setNivelGraduacao($arr['nivelgraduacao']);
         $cr->setPublicoAlvo($arr['publico_alvo']);
         $cr->setValor($arr['valor']);
         $cr->setVideoApresentacao($arr['videoapres']);
         $cr->setEmail($arr['email']);
+        $cr->setCredito($arr['credito']);
         return $cr;
     }
 
