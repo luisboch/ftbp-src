@@ -26,6 +26,12 @@ class ServicoCurso extends ServicoBasico{
     public function validar(Entidade $entidade) {
         $v = new ValidacaoExecao();
         
+        // Check defaults
+        if($this->stado == self::CRIACAO){
+            $entidade->setDataCriacao(new DateTime());
+        }
+        
+        
         if($entidade->getNome() == ''){
             $v->addError('nome curso inválido ->  curso '. $entidade->getNome(), 'curso');
         }
@@ -39,7 +45,9 @@ class ServicoCurso extends ServicoBasico{
         }
         
     }
-    
+    /**
+     * @return Curso[]
+     */
     public function carregarCurso(){
         return $this->cursoDAO->carregarCurso();
     }

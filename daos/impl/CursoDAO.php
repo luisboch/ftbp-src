@@ -28,10 +28,17 @@ class CursoDAO extends DAOBasico {
 
         $p = $this->getConn()->prepare($sql);
 
+        // Set params on prepared statement
         $p->setParameter(1, $id, PreparedStatement::INTEGER);
         $p->setParameter(2, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
-        $p->setParameter(4, $entidade->getDataVestibular(), PreparedStatement::STRING);
+
+        if ($entidade->getDataVestibular() != null) {
+            $p->setParameter(4, DAOUtil::toDataBaseTime($entidade->getDataVestibular()), PreparedStatement::STRING);
+        } else {
+            $p->setParameter(4, null, PreparedStatement::STRING);
+        }
+
         $p->setParameter(5, $entidade->getCoordenador(), PreparedStatement::STRING);
         $p->setParameter(6, $entidade->getEmail(), PreparedStatement::STRING);
         $p->setParameter(7, $entidade->getCorpoDocente(), PreparedStatement::STRING);
@@ -39,12 +46,13 @@ class CursoDAO extends DAOBasico {
         $p->setParameter(9, $entidade->getValor(), PreparedStatement::DOUBLE);
         $p->setParameter(10, $entidade->getDuracao(), PreparedStatement::DOUBLE);
         $p->setParameter(11, $entidade->getVideoApresentacao(), PreparedStatement::STRING);
+
         //arrumar o getareacurso para objeto
         $p->setParameter(12, $entidade->getAreaCurso(), PreparedStatement::INTEGER);
         $p->setParameter(13, $entidade->getNivelGraduacao(), PreparedStatement::STRING);
         $p->setParameter(14, $entidade->getContatoSecretaria(), PreparedStatement::STRING);
         $p->setParameter(15, $entidade->getCredito(), PreparedStatement::INTEGER);
-        
+
 
         $p->execute();
 
@@ -52,17 +60,23 @@ class CursoDAO extends DAOBasico {
     }
 
     public function executarUpdate(Entidade $entidade) {
-        $sql= "UPDATE curso
+        $sql = "UPDATE curso
                     SET nome=$1, descricao=$2, data_vestibular=$3, coordenador=$4, 
                     email=$5, corpo_docente=$6, publico_alvo=$7, valor=$8, duracao=$9, 
                     videoapres=$10, areacurso_id=$11, nivelgraduacao=$12, contatosecretaria=$13, 
                     credito=$15
                 WHERE id=$14";
         $p = $this->getConn()->prepare($sql);
-        
+
         $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
         $p->setParameter(2, $entidade->getDescricao(), PreparedStatement::STRING);
-        $p->setParameter(3, $entidade->getDataVestibular(), PreparedStatement::STRING);
+
+        if ($entidade->getDataVestibular() != null) {
+            $p->setParameter(3, DAOUtil::toDataBaseTime($entidade->getDataVestibular()), PreparedStatement::STRING);
+        } else {
+            $p->setParameter(3, null, PreparedStatement::STRING);
+        }
+
         $p->setParameter(4, $entidade->getCoordenador(), PreparedStatement::STRING);
         $p->setParameter(5, $entidade->getEmail(), PreparedStatement::STRING);
         $p->setParameter(6, $entidade->getCorpoDocente(), PreparedStatement::STRING);
@@ -88,7 +102,7 @@ class CursoDAO extends DAOBasico {
     }
 
     public function getById($id) {
-        $sql = "SELECT id, nome, descricao, data_vestibular, coordenador, email, corpo_docente, 
+        $sql = "SELECT id, data_criacao, nome, descricao, data_vestibular, coordenador, email, corpo_docente, 
                         publico_alvo, valor, duracao, videoapres, areacurso_id, nivelgraduacao, 
                         contatosecretaria, excluida, credito
                     FROM curso where id = $1";
@@ -119,8 +133,8 @@ class CursoDAO extends DAOBasico {
         $cr->setContatoSecretaria($arr['contatosecretaria']);
         $cr->setCoordenador($arr['coordenador']);
         $cr->setCorpoDocente($arr["corpo_docente"]);
-        //$cr->setDataVestibular(DAOUtil::toDateTime($arr["data_vestibular"]));
-        $cr->setDataVestibular($arr["data_vestibular"]);
+        $cr->setDataVestibular(DAOUtil::toDateTime($arr["data_vestibular"]));
+        $cr->setDataCriacao(DAOUtil::toDateTime($arr["data_criacao"]));
         $cr->setDuracao($arr['duracao']);
         $cr->setNivelGraduacao($arr['nivelgraduacao']);
         $cr->setPublicoAlvo($arr['publico_alvo']);
@@ -137,7 +151,7 @@ class CursoDAO extends DAOBasico {
      */
     public function carregarCurso() {
 
-        $sql = "SELECT id, nome, descricao, data_vestibular, coordenador, email, corpo_docente, 
+        $sql = "SELECT id, nome, data_criacao, descricao, data_vestibular, coordenador, email, corpo_docente, 
                         publico_alvo, valor, duracao, videoapres, areacurso_id, nivelgraduacao, 
                         contatosecretaria, excluida, credito
                     FROM curso";
