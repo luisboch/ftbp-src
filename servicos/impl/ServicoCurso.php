@@ -1,4 +1,5 @@
 <?php
+
 require_once 'ftbp-src/servicos/impl/ServicoBasico.php';
 require_once 'ftbp-src/daos/impl/CursoDAO.php';
 
@@ -11,13 +12,13 @@ require_once 'ftbp-src/daos/impl/CursoDAO.php';
  *
  * @author felipe
  */
-class ServicoCurso extends ServicoBasico{
-    
+class ServicoCurso extends ServicoBasico {
+
     /**
      * @var CursoDAO
      */
     private $cursoDAO;
-    
+
     function __construct() {
         parent::__construct(new CursoDAO());
         $this->cursoDAO = $this->dao;
@@ -25,25 +26,67 @@ class ServicoCurso extends ServicoBasico{
 
     public function validar(Entidade $entidade) {
         $v = new ValidacaoExecao();
-        
-        if($entidade->getNome() == ''){
-            $v->addError('nome curso inválido ->  curso '. $entidade->getNome(), 'curso');
+
+        // Check defaults
+        if ($this->stado == self::CRIACAO) {
+            $entidade->setDataCriacao(new DateTime());
+        }
+
+
+        if ($entidade->getNome() == '') {
+            $v->addError('nome curso inválido ->  curso ' . $entidade->getNome(), 'curso');
+        }
+
+        if ($entidade->getDescricao() == '') {
+            $v->addError('Descrição curso inválido ->  Descrição ' . $entidade->getDescricao(), 'descricao');
         }
         
-        if($entidade->getDescricao() == ''){
-            $v->addError('Descrição curso inválido ->  Descrição '. $entidade->getDescricao(), 'descricao');
+        foreach ($entidade->getArquivos() as $a) {
+            
+            if($a->getUsuario() == null){
+                $a->setUsuario(SessionManager::getInstance()->getUsuario());
+                $a->setSetor(SessionManager::getInstance()->getUsuario()->getDepartamento());
+            }
+            
+            if($a->getSetor()==null){
+                if(SessionManager::getInstance()->getUsuario()->getDepartamento() == null){
+                    $v->addError("Você não possui um setor associado para efetuar upload");
+                }
+            }
+            
+            if ($a->getCaminho() == '') {
+                $v->addError("Caminho do arquivo é obrigatório");
+            }
+
+            if($a->getCurso() == null){
+                $a->setCurso($entidade);
+            }
+            
+            if($a->getDescricao() == ''){
+                $v->addError("Descrição do arquivo é obrigatória");
+            }
+
+            if($a->getDataUpload() == null){
+                $a->setDataUpload(new DateTime());
+            }
+            
+            if (!$v->isEmtpy()) {
+                throw $v;
+            }
         }
-        
-        if(!$v->isEmtpy()){
+
+        if (!$v->isEmtpy()) {
             throw $v;
         }
-        
     }
-    
-    public function carregarCurso(){
+
+    /**
+     * @return Curso[]
+     */
+    public function carregarCurso() {
         return $this->cursoDAO->carregarCurso();
     }
-    
+
 }
 
 ?>

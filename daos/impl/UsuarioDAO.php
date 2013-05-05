@@ -121,8 +121,20 @@ class UsuarioDAO extends DAOBasico {
         if (!$rs->next()) {
             throw new NoResultException("Usuário não encontrado");
         }
-
-        return $this->montarUsuario($rs);
+        
+        $usuario = $this->montarUsuario($rs);
+        
+        /*
+         * Força o carregamento do setor.
+         * É necessário pois a sessão não mantém a instancia correta do dao em
+         * memória, logo para que o usuário fique completo 
+         * (quando chamamos o metodo montarUsuario uma instancia não completa do
+         * usuário é retornando, ela é carregada sobdemanda).
+         */
+        
+        $usuario->getDepartamento();
+        
+        return $usuario;
     }
 
     /**

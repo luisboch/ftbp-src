@@ -25,6 +25,10 @@ class Mensagens {
         
     }
 
+    /**
+     * 
+     * @return Mensagens
+     */
     public static function getInstance() {
         $instance = self::$instance;
         if (self::$instance === NULL) {
