@@ -15,14 +15,17 @@ class DepartamentoDAO extends DAOBasico {
 
         $p->setParameter(1, $entidade->getNome(), PreparedStatement::STRING);
 
+        
         $p->execute();
 
         // Pega o id gerado na sequence 
         $p = $this->getConn()->query("select currval('departamento_id_seq') as id");
         $p->next();
         $array = $p->fetchArray();
-
+        
         $entidade->setId($array['id']);
+        
+        
     }
 
     public function executarUpdate(Entidade $entidade) {
