@@ -1,5 +1,7 @@
 <?php
 
+require_once 'ftbp-src/entidades/basico/CursoArquivo.php';
+
 /**
  * Description of Curso
  *
@@ -17,13 +19,12 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
      */
     private $nome;
 
-    
     /**
      *
      * @var DateTime
      */
     private $dataCriacao;
-    
+
     /**
      *
      * @var String
@@ -107,6 +108,11 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
      * @return Int
      */
     private $credito;
+
+    /**
+     * @var CursoArquivo[]
+     */
+    private $arquivos = [];
 
     public function getDescricao() {
         return $this->descricao;
@@ -247,14 +253,13 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
     public function getDataCriacao() {
         return $this->dataCriacao;
     }
-    
+
     /**
      * @param DateTime $dataCriacao
      */
     public function setDataCriacao(DateTime $dataCriacao) {
         $this->dataCriacao = $dataCriacao;
-    }    
-    
+    }
 
     /* Inicio de implementações da notificação */
 
@@ -278,21 +283,22 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
 
     public function getMensagem($new = false) {
         if ($new) {
-            return "Novo curso cadastrado \"".$this->nome."\"";
-        }else{
-            return "Curso atualizado \"".$this->nome."\"";
+            return "Novo curso cadastrado \"" . $this->nome . "\"";
+        } else {
+            return "Curso atualizado \"" . $this->nome . "\"";
         }
     }
-    
+
     public function getNotificarEmail() {
         return false;
     }
+
     /* Fim de implementações da notificação */
-    
+
     /* Inicio de implementações da pesquisa */
 
     public function getBreveDescricao() {
-        return 'Curso '.$this->nome.', cadastrado em '.$this->getDataCriacao()->format('d/m/y');
+        return 'Curso ' . $this->nome . ', cadastrado em ' . $this->getDataCriacao()->format('d/m/y');
     }
 
     public function getEntidade() {
@@ -300,42 +306,75 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
     }
 
     public function getPalavrasChave() {
-        
+
         $palavras = [];
-        
+
         // Adiciona o nome do curso
-        if($this->nome != ''){
+        if ($this->nome != '') {
             $palavras[] = $this->nome;
         }
-        
+
         // Adiciona o nível de graduação.
         $nivel = explode(' ', $this->nivelGraduacao);
-        foreach($nivel as $v){
-            if($v != ''){
+        foreach ($nivel as $v) {
+            if ($v != '') {
                 $palavras[] = $v;
             }
         }
-        
+
         $emails = explode(', ', $this->email);
-        
-        foreach($emails as $v){
-            if($v != ''){
+
+        foreach ($emails as $v) {
+            if ($v != '') {
                 $palavras[] = $v;
             }
         }
-        
+
         return $palavras;
-        
     }
 
     public function getTipo() {
-        return __CLASS__;
+        return 'Curso';
     }
 
     public function getTitulo() {
-        return 'Curso '.$this->nome;
+        return 'Curso ' . $this->nome;
     }
-    
+
+    /**
+     * 
+     * @return CursoArquivo[]
+     */
+    public function getArquivos() {
+        return $this->arquivos;
+    }
+
+    /**
+     * @param CursoArquivo[] $arquivos
+     */
+    public function setArquivos($arquivos) {
+        $this->arquivos = $arquivos;
+    }
+
+    public function adicionarArquivo(CursoArquivo $arq) {
+        // Confirma que os arquivos já foram carregados.
+        $this->getArquivos();
+        
+        // Então adiciona
+        $this->arquivos[] = $arq;
+    }
+
+    public function removerArquivo(CursoArquivo $arq) {
+        // Confirma que os arquivos já foram carregados.
+        $this->getArquivos();
+        
+        foreach($this->getArquivos() as $k => $a){
+            if($a === $arq){
+                unset($this->arquivos[$k]);
+            }
+        }
+    }
+
 }
 
 ?>

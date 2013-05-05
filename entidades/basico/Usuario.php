@@ -174,7 +174,7 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
      * @return string
      */
     public function getTipo() {
-        return __CLASS__;
+        return 'Usuario';
     }
     
     /**
