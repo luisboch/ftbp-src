@@ -65,11 +65,11 @@ class CursoDAO extends DAOBasico {
 
 
         $p->execute();
-
-        $entidade->setId($id);
-
-        $this->inserirUploads($entidade);
+        
         // Se possui uploads salva
+        $this->inserirUploads($entidade);
+        
+        $entidade->setId($id);
     }
 
     public function executarUpdate(Entidade $entidade) {
@@ -180,7 +180,7 @@ class CursoDAO extends DAOBasico {
                        ac.nome as ac_nome,
                        ac.data_criacao as ac_data_criacao
                   from curso c
-                  join area_curso ac on (ac.id = c.areacurso_id)
+                  left join area_curso ac on (ac.id = c.areacurso_id)
                  where c.id = $1";
 
         $p = $this->getConn()->prepare($sql);
