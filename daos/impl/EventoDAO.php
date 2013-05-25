@@ -29,7 +29,7 @@ class EventoDAO extends DAOBasico {
         $p->setParameter(1, $id, PreparedStatement::INTEGER);
         $p->setParameter(2, $entidade->getTitulo(), PreparedStatement::STRING);
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
-        $p->setParameter(4, $entidade->getData(), PreparedStatement::INTEGER);
+        $p->setParameter(4, $entidade->getDataEvento(), PreparedStatement::INTEGER);
         $p->setParameter(5, $entidade->getLocal(), PreparedStatement::STRING);
         $p->setParameter(6, $entidade->getContato(), PreparedStatement::STRING);
         
@@ -51,7 +51,7 @@ class EventoDAO extends DAOBasico {
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->setParameter(2, $entidade->getTitulo(), PreparedStatement::STRING);
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
-        $p->setParameter(4, $entidade->getData(), PreparedStatement::STRING);
+        $p->setParameter(4, $entidade->getDataEvento(), PreparedStatement::STRING);
         $p->setParameter(5, $entidade->getLocal(), PreparedStatement::STRING);
         $p->setParameter(6, $entidade->getContato(), PreparedStatement::STRING);
         
@@ -91,7 +91,7 @@ class EventoDAO extends DAOBasico {
         $ev->setId($arr['id']);
         $ev->setTitulo($arr['titulo']);
         $ev->setDescricao($arr['descricao']);
-        $ev->setData($arr['data']);
+        $ev->setDataEvento($arr['data']);
         $ev->setLocal($arr['local']);
         $ev->setContato($arr['contato']);
         $ev->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));

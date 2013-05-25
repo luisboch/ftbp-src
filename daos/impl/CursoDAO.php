@@ -293,7 +293,7 @@ class CursoDAO extends DAOBasico {
         //Recupera o resultado
         $rs = $p->getResult();
 
-        $list = [];
+        $list[] = array();
 
         while ($rs->next()) {
 

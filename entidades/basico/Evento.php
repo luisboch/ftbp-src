@@ -1,6 +1,8 @@
 <?php
 
 require_once 'ftbp-src/entidades/Entidade.php';
+require_once 'ftbp-src/entidades/Notificavel.php';
+require_once 'ftbp-src/entidades/Pesquisavel.php';
 require_once 'ftbp-src/daos/impl/DAOUtil.php';
 /*
  * Aviso.php
@@ -13,7 +15,7 @@ require_once 'ftbp-src/daos/impl/DAOUtil.php';
  * @since Feb 27, 2013
  */
 
-class Evento implements Entidade{
+class Evento implements Entidade, Notificavel, Pesquisavel{
 
     /**
      *
@@ -39,7 +41,7 @@ class Evento implements Entidade{
      *
      * @var DateTime
      */
-    private $data;
+    private $dataEvento;
 
     /**
      *
@@ -107,12 +109,53 @@ class Evento implements Entidade{
     public function setDescricao($descricao) {
         $this->descricao = $descricao;
     }
-    public function getData() {
-        return $this->data;
+    public function getDataEvento() {
+        return $this->dataEvento;
     }
 
-    public function setData($data) {
-        $this->data = $data;
+    public function setDataEvento($dataEvento) {
+        $this->dataEvento = $dataEvento;
+    }
+
+    public function getBreveDescricao() {
+        return "Evento $this->titulo, cadastrado em " . $this->getDataCriacao();
+    }
+
+    public function getData() {
+        return new DateTime();
+    }
+    
+    public function getDataExpiracao() {
+        return null;
+    }
+
+    public function getEntidade() {
+        return $this;
+    }
+
+    public function getLink() {
+        return 'EventoController/verEvento/' . $this->id;
+    }
+
+    public function getMensagem($new = false) {
+        return ($new ? 'Novo ' : '') . 'Evento ' . ($new ? 'cadastrado' : 'alterado') . ' "' . $this->titulo . '"';
+    }
+
+    public function getNotificarEmail() {
+         return false;
+    }
+
+    public function getPalavrasChave() {
+        $arr = array();
+        if ($this->titulo != '') {
+            $arr = explode(' ', $this->titulo);
+        }
+        $arr[] = $this->id;
+        return $arr;
+    }
+
+    public function getTipo() {
+        return __CLASS__;
     }
 
 }
