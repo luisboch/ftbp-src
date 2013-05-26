@@ -131,7 +131,8 @@ class ServicoPesquisa extends ServicoBasico {
      * @return List<Pesquisa>
      */
     public function pesquisar($text) {
-        return $this->dao->pesquisar($text);
+        $restrito = SessionManager::getInstance()->getUsuario() === NULL;
+        return $this->dao->pesquisar($text, $restrito);
     }
 
 }

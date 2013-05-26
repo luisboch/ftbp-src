@@ -109,6 +109,11 @@ class Evento implements Entidade, Notificavel, Pesquisavel{
     public function setDescricao($descricao) {
         $this->descricao = $descricao;
     }
+    
+    /**
+     * 
+     * @return DateTime
+     */
     public function getDataEvento() {
         return $this->dataEvento;
     }
@@ -118,7 +123,7 @@ class Evento implements Entidade, Notificavel, Pesquisavel{
     }
 
     public function getBreveDescricao() {
-        return "Evento $this->titulo, cadastrado em " . $this->getDataCriacao();
+        return "Evento $this->titulo, cadastrado em " . $this->getDataCriacao()->format('d/m/y'). ' às '.$this->getDataCriacao()->format('H:i');
     }
 
     public function getData() {
@@ -134,7 +139,7 @@ class Evento implements Entidade, Notificavel, Pesquisavel{
     }
 
     public function getLink() {
-        return 'EventoController/verEvento/' . $this->id;
+        return 'Ver/evento/' . $this->id;
     }
 
     public function getMensagem($new = false) {

@@ -278,7 +278,7 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
     }
 
     public function getLink() {
-        return 'CursoController/verCurso/' . $this->getId();
+        return 'Ver/curso/' . $this->getId();
     }
 
     public function getMensagem($new = false) {
