@@ -9,7 +9,6 @@ require_once 'ftbp-src/daos/impl/DAOUtil.php';
  */
 
 /**
- * Description of Aviso
  *
  * @author Felipe
  * @since Feb 27, 2013

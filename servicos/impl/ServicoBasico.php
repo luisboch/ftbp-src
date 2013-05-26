@@ -1,5 +1,6 @@
 <?php
 
+require_once 'ftbp-src/servicos/listener/ServicoAcao.php';
 require_once 'ftbp-src/servicos/Servico.php';
 require_once 'ftbp-src/servicos/execoes/ValidacaoExecao.php';
 require_once 'ftbp-src/servicos/execoes/AcessoExecao.php';
@@ -17,7 +18,6 @@ abstract class ServicoBasico implements EntidadeServico {
 
     const CRIACAO = 'CRIAÇAO';
     const ATUALIZACAO = 'ATUALIZAÇÃO';
-
 
     /**
      * @var type 
@@ -41,9 +41,13 @@ abstract class ServicoBasico implements EntidadeServico {
      * @var DAOBasico
      */
     protected $dao;
-
     protected $stado;
 
+    /**
+     *
+     * @var ServicoAcao[]
+     */
+    private $listeners;
 
     /**
      * 
@@ -54,6 +58,8 @@ abstract class ServicoBasico implements EntidadeServico {
 
         $this->dao = $dao;
         $this->dao->connect();
+
+        $this->listeners = new ArrayObject();
 
         if ($iniciarServicos) {
             require_once 'ftbp-src/servicos/impl/ServicoNotificacao.php';
@@ -78,16 +84,19 @@ abstract class ServicoBasico implements EntidadeServico {
         $this->checarAcesso();
 
         $this->stado = self::CRIACAO;
-        
+
         $this->validar($entidade);
 
+
+        $this->antesDeInserir($entidade);
+        
         try {
 
             if ($autoCommit) {
                 // Inicia a transação
                 $this->dao->getConn()->begin();
             }
-            
+
             // Executa o insert da entidade
             $this->dao->executarInsert($entidade);
 
@@ -129,10 +138,14 @@ abstract class ServicoBasico implements EntidadeServico {
         $this->checarAcesso();
 
         $this->stado = self::ATUALIZACAO;
-        
+
         $this->validar($entidade);
 
+        $this->antesDeAtualizar($entidade, $this->getById($entidade->getId()));
+
         try {
+
+
             if ($autoCommit) {
                 // Inicia a transação
                 $this->dao->getConn()->begin();
@@ -233,6 +246,24 @@ abstract class ServicoBasico implements EntidadeServico {
         return $this->dao->getById($id);
     }
 
+    /**
+     * É chamado antes de uma atualização, com o novo objeto e com o antigo.
+     */
+    private function antesDeAtualizar($novo, $velho) {
+        foreach($this->listeners as $k => $v){
+            $v->antesDeAtualizar($novo, $velho);
+        }
+    }
+
+    private function antesDeInserir($new) {
+        foreach($this->listeners as $k => $v){
+            $v->antesDoSalvar($novo);
+        }
+    }
+
+    public function adicionarListener(ServicoAcao $listener) {
+        $this->listeners[] = $listener;
+    }
 }
 
 ?>
