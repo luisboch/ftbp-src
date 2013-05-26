@@ -44,8 +44,8 @@ class ServicoEvento extends ServicoBasico{
      * 
      * @return array
      */
-    public function carregarEvento() {
-        return $this->eventoDAO->carregarEvento();
+    public function carregarEvento($limite = null) {
+        return $this->eventoDAO->carregarEvento($limite);
     }
     
 }

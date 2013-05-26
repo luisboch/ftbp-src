@@ -238,12 +238,18 @@ class CursoDAO extends DAOBasico {
      * 
      * @return array
      */
-    public function carregarCurso() {
+    public function carregarCurso($limit = NULL) {
 
-        $sql = "SELECT id, nome, data_criacao, descricao, data_vestibular, coordenador, email, corpo_docente, 
+        $sql = "select id, nome, data_criacao, descricao, data_vestibular, coordenador, email, corpo_docente, 
                         publico_alvo, valor, duracao, videoapres, areacurso_id, nivelgraduacao, 
-                        contatosecretaria, excluida, credito
-                    FROM curso";
+                        contatosecretaria, excluida, credito, acessos
+                  from curso 
+              order by acessos
+              ";
+        
+        if($limit !== NULL){
+            $sql .= "limit ".$limit;
+        }
 
         $p = $this->getConn()->prepare($sql);
 
@@ -293,7 +299,7 @@ class CursoDAO extends DAOBasico {
         //Recupera o resultado
         $rs = $p->getResult();
 
-        $list[] = array();
+        $list = array();
 
         while ($rs->next()) {
 

@@ -38,6 +38,12 @@ class Requisicao implements Entidade{
      * @var Usuario
      */
     private $criadoPor;
+    
+    /**
+     *
+     * @var Usuario
+     */
+    private $fechadoPor;
     /**
      *
      * @var RequisicaoIteracao[]
@@ -200,6 +206,20 @@ class Requisicao implements Entidade{
     public function setPrioridade($prioridade) {
         $this->prioridade = $prioridade;
     }
+    
+    /**
+     * 
+     * @return Usuario
+     */
+    public function getFechadoPor() {
+        return $this->fechadoPor;
+    }
+
+    public function setFechadoPor(Usuario $fechadoPor) {
+        $this->fechadoPor = $fechadoPor;
+    }
+
+
     
 }
 

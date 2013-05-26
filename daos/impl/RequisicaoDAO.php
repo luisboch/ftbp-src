@@ -106,18 +106,25 @@ class RequisicaoDAO extends DAOBasico {
                        descricao = $2, 
                        usuario_id = $3, 
                        status = $4,
-                       prioridade = $5
-                 where id = $6";
+                       prioridade = $5,
+                       fechado_por = $6
+                 where id = $7";
         
         $p = $this->getConn()->prepare($sql);
-        
         // Seta os parãmetros.
         $p->setParameter(1, $entidade->getTitulo(), PreparedStatement::STRING);
         $p->setParameter(2, $entidade->getDescricao(), PreparedStatement::STRING);
         $p->setParameter(3, $entidade->getUsuario()->getId(), PreparedStatement::INTEGER);
         $p->setParameter(4, $entidade->getStatus(), PreparedStatement::STRING);
         $p->setParameter(5, $entidade->getPrioridade(), PreparedStatement::STRING);
-        $p->setParameter(6, $entidade->getId(), PreparedStatement::INTEGER);
+        
+        if($entidade->getFechadoPor() !== null){
+            $p->setParameter(6, $entidade->getFechadoPor()->getId(), PreparedStatement::INTEGER);
+        } else {
+            $p->setParameter(6, null, PreparedStatement::INTEGER);
+        }
+        
+        $p->setParameter(7, $entidade->getId(), PreparedStatement::INTEGER);
         
         $p->execute();
         
@@ -244,6 +251,10 @@ class RequisicaoDAO extends DAOBasico {
         $rq->setDescricao($arr['descricao']);
         $rq->setStatus($arr['status']);
         $rq->setPrioridade($arr['prioridade']);
+        
+        if($arr['fechado_por'] !== NULL){
+            $rq->setFechadoPor($this->usuarioDAO->getById($arr['fechado_por']));
+        }
         
         return $rq;
         

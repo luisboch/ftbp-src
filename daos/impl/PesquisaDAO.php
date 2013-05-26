@@ -15,7 +15,13 @@ require_once 'ftbp-src/daos/impl/DAOBasico.php';
  * @author luis
  */
 class PesquisaDAO extends DAOBasico {
+    private $log ;
+    
+    function __construct() {
+        $this->log= Logger::getLogger('PesquisaDAO');
+    }
 
+    
     /**
      * @param Pesquisavel $entidade
      */
@@ -24,11 +30,13 @@ class PesquisaDAO extends DAOBasico {
         // Pega o id da pesquisa
         $sql1 = "select id 
                   from pesquisa 
-                 where entidade_id = $1 ";
+                 where entidade_id = $1 
+                   and tipo = $2";
 
         $p1 = $this->getConn()->prepare($sql1);
 
         $p1->setParameter(1, $entidade->getEntidade()->getId(), PreparedStatement::INTEGER);
+        $p1->setParameter(2, $entidade->getTipo(), PreparedStatement::STRING);
 
         $rs = $p1->getResult();
 
@@ -54,11 +62,11 @@ class PesquisaDAO extends DAOBasico {
             // deleta a entidade.
             $sql3 = "delete
                   from pesquisa 
-                 where entidade_id = $1 ";
+                 where id = $1 ";
 
             $p3 = $this->getConn()->prepare($sql3);
 
-            $p3->setParameter(1, $entidade->getEntidade()->getId(), PreparedStatement::INTEGER);
+            $p3->setParameter(1, $pesquisaId, PreparedStatement::INTEGER);
 
             $p3->execute();
         }
@@ -146,13 +154,15 @@ class PesquisaDAO extends DAOBasico {
     /**
      * 
      * @param string $string
-     * @return List<Pesquisa>
+     * @param boolean $restrito Restringir a pesquisa para Curso e Evento (usado para pesquisa externa) ?
+     * @return Pesquisa[]
      */
-    public function pesquisar($string = "") {
+    public function pesquisar($string = "", $restrito = false) {
 
         // Prepara a querie levando em consideração apenas a tabela principal
-        $sql = "select distinct p.* 
-                  from pesquisa p ";
+        $sql = "
+            select distinct p.* 
+              from pesquisa p ";
         $palavras = explode(' ', $string);
 
         // Adicioa joins para a tabela de palavras, registrando quais 
@@ -162,13 +172,26 @@ class PesquisaDAO extends DAOBasico {
         $i = 1;
         
         foreach ($palavras as $p) {
-            $sql .= "join palavras_chave p".$i." on (p".$i.".pesquisa_id = p.id and lower(p".$i.".palavra) like lower( $" . $i . " ) ) ";
+            $sql .= "
+              join palavras_chave p".$i." on (p".$i.".pesquisa_id = p.id and lower(p".$i.".palavra) like lower( $" . $i . " ) ) ";
             $params[$i] = $p;
             $i++;
         }
         
+        /**
+         * Quando é restrito prescisamos validar o tipo de dado 
+         * (para restrito usamos filtro por Curso e Evento). 
+         */
+        if($restrito){
+            
+            // usamos a quebra de linha para que o log fique mais legível.
+            $sql .= "
+             where tipo in ('Curso', 'Evento') ";
+        }
+        
         // Limita a querie com os 50 primeiros registros.
-        $sql .= 'limit 50';
+        $sql .= '
+             limit 50';
         
         $pr = $this->getConn()->prepare($sql);
 

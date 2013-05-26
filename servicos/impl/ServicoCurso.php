@@ -83,9 +83,11 @@ class ServicoCurso extends ServicoBasico {
     /**
      * @return Curso[]
      */
-    public function carregarCurso() {
+    public function carregarCurso($limit = NULL) {
         return $this->cursoDAO->carregarCurso();
     }
+    
+    
 
 }
 
