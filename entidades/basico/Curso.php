@@ -112,7 +112,7 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
     /**
      * @var CursoArquivo[]
      */
-    private $arquivos = [];
+    private $arquivos = array();
 
     public function getDescricao() {
         return $this->descricao;
@@ -307,7 +307,7 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
 
     public function getPalavrasChave() {
 
-        $palavras = [];
+        $palavras = array();
 
         // Adiciona o nome do curso
         if ($this->nome != '') {
