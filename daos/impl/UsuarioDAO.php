@@ -121,9 +121,9 @@ class UsuarioDAO extends DAOBasico {
         if (!$rs->next()) {
             throw new NoResultException("Usuário não encontrado");
         }
-        
+
         $usuario = $this->montarUsuario($rs);
-        
+
         /*
          * Força o carregamento do setor.
          * É necessário pois a sessão não mantém a instancia correta do dao em
@@ -131,9 +131,9 @@ class UsuarioDAO extends DAOBasico {
          * (quando chamamos o metodo montarUsuario uma instancia não completa do
          * usuário é retornando, ela é carregada sobdemanda).
          */
-        
+
         $usuario->getDepartamento();
-        
+
         return $usuario;
     }
 
@@ -153,6 +153,7 @@ class UsuarioDAO extends DAOBasico {
         $u->setResponsavel($arr['responsavel'] === 't');
         $u->setTipoUsuario($arr['tipo_usuario']);
         $u->setDepartamentoId($arr['departamento_id']);
+        $u->setGrupoId($arr['grupo_id']);
 
         return $u;
     }
@@ -287,9 +288,38 @@ class UsuarioDAO extends DAOBasico {
             while ($rs->next()) {
                 $list[] = $this->montarUsuario($rs);
             }
-            
         }
         return $list;
+    }
+
+    public function carregarGrupo(Usuario $usuario, $grupoId) {
+
+        if ($grupoId != '') {
+            // Monta a query
+            $sql = "select id, nome, data_criacao
+                  from grupos
+                 where id = $1";
+            $p = $this->getConn()->prepare($sql);
+
+            // Seta os parâmetros
+            $p->setParameter(1, $grupoId, PreparedStatement::INTEGER);
+
+            $rs = $p->getResult();
+
+            if (!$rs->next()) {
+                throw new NoResultException("Grupo não encontrado com id: " . $grupoId);
+            }
+
+            // Monta o grupo
+            $g = new Grupo();
+
+            $g->setId((int) $grupoId);
+            $g->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
+            $g->setNome($arr['nome']);
+
+            $usuario->setGrupo($g);
+            
+        }
     }
 
 }

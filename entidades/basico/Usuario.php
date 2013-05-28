@@ -55,6 +55,12 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
      * @var integer
      */
     private $tipoUsuario;
+    
+    /**
+     *
+     * @var Grupo
+     */
+    private $grupo;
     /**
      * @return integer
      */
@@ -247,17 +253,30 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
     }
     
     /**
-     * 
      * @return string
      */
     public function getMensagem($new = false) {
         return ($new?'Novo usuario cadastrado ':'Usuario alterado ').'"'.$this->nome.' ['.$this->email.']"' ;
     }
 
+    /**
+     * @return boolean
+     */
     public function getNotificarEmail() {
         return false;
     }
 
+    /**
+     * @return Grupo
+     */
+    public function getGrupo() {
+        return $this->grupo;
+    }
+
+    public function setGrupo(Grupo $grupo) {
+        $this->grupo = $grupo;
+    }
+    
 }
 
 ?>

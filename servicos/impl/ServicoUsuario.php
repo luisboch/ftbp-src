@@ -60,6 +60,10 @@ class ServicoUsuario extends ServicoBasico {
         if ($usuario->getDataCriacao() == null) {
             $usuario->setDataCriacao(new DateTime());
         }
+        
+        if($usuario->getGrupo() == null){
+            $v->addError("Grupo do usuário inválido", "grupo");
+        }
 
         if (!$v->isEmtpy()) {
             throw $v;
