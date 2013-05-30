@@ -39,7 +39,15 @@ class ServicoGrupo extends ServicoBasico{
     public function carregarGrupos() {
         return $this->grupoDAO->carregarGrupos();
     }
+
+    public function carregarAcesso(Grupo $grupo) {
+        return $this->grupoDAO->carregarAcesso($grupo);
+    }
     
+    public function getById($id) {
+        $grupo = parent::getById($id);
+        return $this->carregarAcesso($grupo);
+    }
 }
 
 ?>

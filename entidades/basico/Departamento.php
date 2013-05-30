@@ -59,7 +59,7 @@ class Departamento implements Entidade, Pesquisavel, Notificavel {
     }
 
     public function getBreveDescricao() {
-        return "Departamento $this->nome, cadastrado em " . $this->getDataCriacao()->format('d/M/y');
+        return "Setor $this->nome, cadastrado em " . $this->getDataCriacao()->format('d/M/y');
     }
 
     public function getData() {
@@ -79,7 +79,7 @@ class Departamento implements Entidade, Pesquisavel, Notificavel {
     }
 
     public function getMensagem($new = false) {
-        return ($new ? 'Novo ' : '') . 'Departamento ' . ($new ? 'cadastrado' : 'alterado') . ' "' . $this->nome . '"';
+        return ($new ? 'Novo ' : '') . 'Setor ' . ($new ? 'cadastrado' : 'alterado') . ' "' . $this->nome . '"';
     }
 
     public function getNotificarEmail() {

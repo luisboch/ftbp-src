@@ -3,6 +3,7 @@
 require_once 'ftbp-src/entidades/Entidade.php';
 require_once 'ftbp-src/entidades/Notificavel.php';
 require_once 'ftbp-src/entidades/Pesquisavel.php';
+require_once 'ftbp-src/entidades/basico/GrupoAcesso.php';
 
 /**
  * Description of Grupo
@@ -29,6 +30,16 @@ class Grupo implements Entidade, Pesquisavel, Notificavel {
      * @var DateTime
      */
     private $dataCriacao;
+
+    /**
+     * 
+     * @return GrupoAcesso[]
+     */
+    private $acessos;
+
+    function __construct() {
+        $this->acessos = array();
+    }
 
     public function getId() {
         return $this->id;
@@ -92,12 +103,58 @@ class Grupo implements Entidade, Pesquisavel, Notificavel {
     }
 
     public function getTipo() {
-        return __CLASS__;
+        return 'Grupo';
     }
 
     public function getTitulo() {
         return "Grupo " . $this->nome;
     }
+
+    public function getAcessos() {
+        return $this->acessos;
+    }
+
+    public function setAcessos($acessos) {
+        $this->acessos = $acessos;
+    }
+    
+    public function temAcesso($acesso, $escrita = false) {
+        
+        $tipo = GrupoAcesso::checarTipo($acesso);
+        
+        foreach ($this->acessos as $v) {
+            /* @var $v GrupoAcesso */
+            if ($v->getTipo() == $tipo) {
+                
+                if ($escrita) {
+                    if ($v->getEscrita()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * @param GrupoAcesso $acesso
+     */
+    public function adicionarAcesso($acesso, $escrita = false){
+        if(is_object($acesso)){
+            $this->acessos[] = $acesso;
+        } else{
+            $a = new GrupoAcesso();
+            $a->setTipo($acesso);
+            $a->setEscrita($escrita);
+            $this->adicionarAcesso($a);
+        }
+    }
+    
 
 }
 

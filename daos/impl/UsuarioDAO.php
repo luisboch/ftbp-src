@@ -3,6 +3,7 @@
 require_once 'ftbp-src/daos/EntidadeDAO.php';
 require_once 'DAOBasico.php';
 require_once 'ftbp-src/daos/impl/DAOUtil.php';
+require_once 'ftbp-src/daos/impl/GrupoDAO.php';
 require_once 'ftbp-src/daos/impl/lazy/UsuarioLazy.php';
 require_once 'ftbp-src/entidades/basico/Usuario.php';
 /*
@@ -65,11 +66,12 @@ class UsuarioDAO extends DAOBasico {
                        email           = $2,
                        departamento_id = $3,
                        responsavel     = " . ( $entidade->getResponsavel() ? 'true' : 'false') . ",
-                       tipo_usuario    = $4 ";
+                       tipo_usuario    = $4,
+                       grupo_id        = $5";
         if ($entidade->getSenha() != '') {
-            $sql .= ",senha           = $6 ";
+            $sql .= ",senha           = $7 ";
         }
-        $sql .= "WHERE id = $5";
+        $sql .= "WHERE id = $6";
 
         $p = $this->getConn()->prepare($sql);
 
@@ -83,10 +85,12 @@ class UsuarioDAO extends DAOBasico {
         }
         $p->setParameter(4, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
 
-        $p->setParameter(5, $entidade->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getGrupo()->getId(), PreparedStatement::INTEGER);
+        
+        $p->setParameter(6, $entidade->getId(), PreparedStatement::INTEGER);
 
         if ($entidade->getSenha() != '') {
-            $p->setParameter(6, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
+            $p->setParameter(7, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
         }
 
         $p->execute();
@@ -125,15 +129,21 @@ class UsuarioDAO extends DAOBasico {
         $usuario = $this->montarUsuario($rs);
 
         /*
-         * Força o carregamento do setor.
+         * Força o carregamento do setor e do grupo.
          * É necessário pois a sessão não mantém a instancia correta do dao em
          * memória, logo para que o usuário fique completo 
          * (quando chamamos o metodo montarUsuario uma instancia não completa do
          * usuário é retornando, ela é carregada sobdemanda).
          */
-
+        
         $usuario->getDepartamento();
-
+        $usuario->getGrupo();
+        
+        // Carrega o acesso do usuário
+        $grupoDAO = new GrupoDAO();
+        $grupoDAO->setConn($this->getConn());
+        $grupoDAO->carregarAcesso($usuario->getGrupo());
+        
         return $usuario;
     }
 

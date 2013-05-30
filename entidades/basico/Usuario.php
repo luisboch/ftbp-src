@@ -3,6 +3,8 @@ require_once 'ftbp-src/entidades/Entidade.php';
 require_once 'ftbp-src/entidades/Pesquisavel.php';
 require_once 'ftbp-src/entidades/basico/TipoUsuario.php';
 require_once 'ftbp-src/entidades/basico/Departamento.php';
+require_once 'ftbp-src/entidades/basico/Grupo.php';
+
 /**
  * Classe básica de definicao de usuário
  * @author Luis
