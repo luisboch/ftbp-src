@@ -44,6 +44,12 @@ class Requisicao implements Entidade{
      * @var Usuario
      */
     private $fechadoPor;
+    
+    /**
+     *
+     * @var DateTime 
+     */
+    private $dataFechamento;
     /**
      *
      * @var RequisicaoIteracao[]
@@ -219,7 +225,20 @@ class Requisicao implements Entidade{
         $this->fechadoPor = $fechadoPor;
     }
 
+    /**
+     * @return DateTime
+     */
+    public function getDataFechamento() {
+        return $this->dataFechamento;
+    }
 
+    public function setDataFechamento($dataFechamento) {
+        if($dataFechamento != null && !$dataFechamento instanceof DateTime){
+            $encontrado = is_object($dataFechamento) ? get_class($dataFechamento) : (is_string($dataFechamento)?$dataFechamento:"");
+            throw new InvalidArgumentException("Expecting instance of DateTime, found: ".$encontrado);
+        }
+        $this->dataFechamento = $dataFechamento;
+    }
     
 }
 

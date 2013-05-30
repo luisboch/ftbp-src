@@ -30,11 +30,16 @@ class ServicoRequisicao extends ServicoBasico {
         $this->adicionarListener(
                 new ServicoAcao(
                 null, function($novo, $velho) {
-                    /* @var $req1 Requisicao */
+                    /* @var $novo Requisicao */
+                    /* @var $velho Requisicao */
                     if($novo->getStatus() == 'FINALIZADO'){
                         if($velho->getStatus() != 'FINALIZADO'){
                             $novo->setFechadoPor(SessionManager::getInstance()->getUsuario());
+                            $novo->setDataFechamento(new DateTime());
                         }
+                    } else if($velho->getStatus() == 'FINALIZADO'){
+                            $novo->setFechadoPor(null);
+                            $novo->setDataFechamento(null);
                     }
                 })
         );

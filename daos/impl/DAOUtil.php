@@ -20,6 +20,11 @@ class DAOUtil {
      * @return string
      */
     public static function toDataBaseTime(DateTime $dateTime) {
+        
+        if ($dateTime ===NULL) {
+            return null;
+        }
+        
         return $dateTime->format(self::$format);
     }
 
