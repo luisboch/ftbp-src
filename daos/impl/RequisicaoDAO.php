@@ -88,29 +88,30 @@ class RequisicaoDAO extends DAOBasico {
      * @throws InvalidArgumentException
      */
     public function executarUpdate(Entidade $entidade) {
-
+        /* @var $entidade Requisicao */
         if ($entidade->getUsuario() === NULL) {
             throw new InvalidArgumentException("Requisicao sem usuario não é permitido.");
         }
 
         // Primeiro exclui todas as iterações.
-        $sql = "delete from requisicoes_iteracoes where requisicao_id = $1";
+        $sql1 = "delete from requisicoes_iteracoes where requisicao_id = $1";
         
-        $p = $this->getConn()->prepare($sql);
+        $p = $this->getConn()->prepare($sql1);
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->execute();
 
         // Executa o update na requisição
-        $sql = "update requisicoes
+        $sql2 = "update requisicoes
                    set titulo = $1, 
                        descricao = $2, 
                        usuario_id = $3, 
                        status = $4,
                        prioridade = $5,
-                       fechado_por = $6
-                 where id = $7";
+                       fechado_por = $6,
+                       data_fechamento = $7
+                 where id = $8";
         
-        $p = $this->getConn()->prepare($sql);
+        $p = $this->getConn()->prepare($sql2);
         // Seta os parãmetros.
         $p->setParameter(1, $entidade->getTitulo(), PreparedStatement::STRING);
         $p->setParameter(2, $entidade->getDescricao(), PreparedStatement::STRING);
@@ -124,12 +125,13 @@ class RequisicaoDAO extends DAOBasico {
             $p->setParameter(6, null, PreparedStatement::INTEGER);
         }
         
-        $p->setParameter(7, $entidade->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(7, DAOUtil::toDataBaseTime($entidade->getDataFechamento()), PreparedStatement::INTEGER);
+        $p->setParameter(8, $entidade->getId(), PreparedStatement::INTEGER);
         
         $p->execute();
         
         // Insere todas as iterações novamente
-        $sql = "insert 
+        $sql3 = "insert 
                   into requisicoes_iteracoes(
                        requisicao_id, 
                        usuario_id, 
@@ -137,7 +139,7 @@ class RequisicaoDAO extends DAOBasico {
                        data_criacao)
                 values ($1, $2, $3, $4)";
         
-        $p = $this->getConn()->prepare($sql);
+        $p = $this->getConn()->prepare($sql3);
         
         // Seta os parametros e executa insert para cada iteração da requisição
         if ($entidade->getIteracoes() != null && is_array($entidade->getIteracoes())) {
@@ -247,6 +249,7 @@ class RequisicaoDAO extends DAOBasico {
         $rq->setUsuario($this->usuarioDAO->getById($arr['usuario_id']));
         $rq->setCriadoPor($this->usuarioDAO->getById($arr['criado_por']));
         $rq->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
+        $rq->setDataFechamento(DAOUtil::toDateTime($arr['data_fechamento']));
         $rq->setTitulo($arr['titulo']);
         $rq->setDescricao($arr['descricao']);
         $rq->setStatus($arr['status']);
