@@ -19,7 +19,7 @@ class DAOUtil {
      * @param DateTime $dateTime
      * @return string
      */
-    public static function toDataBaseTime(DateTime $dateTime) {
+    public static function toDataBaseTime($dateTime) {
         
         if ($dateTime ===NULL) {
             return null;

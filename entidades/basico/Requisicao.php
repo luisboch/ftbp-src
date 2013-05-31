@@ -221,7 +221,10 @@ class Requisicao implements Entidade{
         return $this->fechadoPor;
     }
 
-    public function setFechadoPor(Usuario $fechadoPor) {
+    /**
+     * @param Usuario $fechadoPor
+     */
+    public function setFechadoPor($fechadoPor) {
         $this->fechadoPor = $fechadoPor;
     }
 
