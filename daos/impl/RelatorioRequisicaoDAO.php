@@ -62,12 +62,13 @@ class RelatorioRequisicaoDAO extends DAOBasico {
     public function gerarRelatorioAbertura(Entidade $entidade){
         $sql = "SELECT usu.nome, dp.nome departamento, count(*) qtde
                 FROM requisicoes rq
-                        join usuarios usu on usu.id = rq.fechado_por
+                        join usuarios usu on usu.id = rq.criado_por
                         inner join departamento dp on dp.id = usu.departamento_id
-                where rq.status =  'FINALIZADO'
-                and
-                    to_char(rq.data_criacao, 'YYYY-MM-DD') between $1 and $2
-                group by usu.nome, dp.nome";
+                where
+                    TO_date(TO_CHAR(rq.data_criacao, 'YYYY-MM-DD'), 'YYYY-MM-DD')
+                    between 
+                    TO_date($1, 'YYYY-MM-DD') and TO_date($2, 'YYYY-MM-DD')
+                group by usu.nome, dp.nome order by usu.nome, dp.nome desc";
 
         
         $p = $this->getConn()->prepare($sql);
