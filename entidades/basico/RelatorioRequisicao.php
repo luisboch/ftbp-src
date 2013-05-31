@@ -1,8 +1,7 @@
 <?php
 
 require_once 'ftbp-src/entidades/Entidade.php';
-require_once 'ftbp-src/entidades/Notificavel.php';
-require_once 'ftbp-src/entidades/Pesquisavel.php';
+
 /*
  * AreaCurso.php
  */
@@ -12,13 +11,25 @@ require_once 'ftbp-src/entidades/Pesquisavel.php';
  * @author jefferson
  * @since mar 04, 2013
  */
-class Relatorio implements Entidade{
+class RelatorioRequisicao implements Entidade{
     
     /**
      *
      * @var integer
      */
     private $tipo;
+    
+    /**
+     * 
+     *@var usuario 
+     */
+    private $usuario;
+    
+    /**
+     *
+     * @var departamento 
+     */
+    private $departamento;
     
     /**
      *
@@ -31,6 +42,12 @@ class Relatorio implements Entidade{
      * @var DateTime
      */
     private $dataFim;
+    
+    /**
+     *
+     * @return int
+     */
+    private $qtde;
     
     public function getTipo() {
         return $this->tipo;
@@ -67,6 +84,30 @@ class Relatorio implements Entidade{
     public function setId($id) {
       return null;  
     }
+    public function getUsuario() {
+        return $this->usuario;
+    }
+
+    public function setUsuario($usuario) {
+        $this->usuario = $usuario;
+    }
+
+    public function getDepartamento() {
+        return $this->departamento;
+    }
+
+    public function setDepartamento($departamento) {
+        $this->departamento = $departamento;
+    }
+
+    public function getQtde() {
+        return $this->qtde;
+    }
+
+    public function setQtde($qtde) {
+        $this->qtde = $qtde;
+    }
+
 
 }
 
