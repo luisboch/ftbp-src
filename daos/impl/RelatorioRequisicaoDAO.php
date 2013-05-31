@@ -58,6 +58,35 @@ class RelatorioRequisicaoDAO extends DAOBasico {
         // Retorna a lista montada.
         return $list;
     }
+    
+    public function gerarRelatorioAbertura(Entidade $entidade){
+        $sql = "SELECT usu.nome, dp.nome departamento, count(*) qtde
+                FROM requisicoes rq
+                        join usuarios usu on usu.id = rq.fechado_por
+                        inner join departamento dp on dp.id = usu.departamento_id
+                where rq.status =  'FINALIZADO'
+                and
+                    to_char(rq.data_criacao, 'YYYY-MM-DD') between $1 and $2
+                group by usu.nome, dp.nome";
+
+        
+        $p = $this->getConn()->prepare($sql);
+        
+        $p->setParameter(1, $entidade->getDataInicio(), PreparedStatement::STRING);
+        $p->setParameter(2, $entidade->getDataFim(), PreparedStatement::STRING);
+        
+        $rs = $p->getResult();
+
+        $list = array();
+        while($rs->next()){
+            
+            // Monta o objeto 
+            $list[] = $this->montarRelatorio($rs);
+        }
+        
+        // Retorna a lista montada.
+        return $list;
+    }
 
     public function executarDelete(Entidade $entidade) {
         return null;

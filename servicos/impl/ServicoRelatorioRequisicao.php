@@ -46,10 +46,13 @@ class ServicoRelatorioRequisicao extends ServicoBasico{
      * @return array
      */
     public function gerarRelatorioFechamento(Entidade $entidade) {
-        
-        
         $this->validar($entidade);
         return $this->relatorioRequisicaoDAO->gerarRelatorioFechamento($entidade);
+    }
+  
+    public function gerarRelatorioAbertura(Entidade $entidade) {
+        $this->validar($entidade);
+        return $this->relatorioRequisicaoDAO->gerarRelatorioAbertura($entidade);
     }
 }
 
