@@ -14,7 +14,7 @@ require_once 'ftbp-src/daos/impl/RelatorioRequisicaoDAO.php';
 class ServicoRelatorioRequisicao extends ServicoBasico{
     
     /**
-     * @var DepartamentoDAO
+     * @var RelatorioRequisicaoDAO
      */
     private $relatorioRequisicaoDAO;
     
