@@ -120,6 +120,11 @@ class Grupo implements Entidade, Pesquisavel, Notificavel {
     
     public function temAcesso($acesso, $escrita = false) {
         
+        // Verifica se a aplicação está bloqueada para escrita
+        if(WRITE_LOCKED && $escrita){
+            return false;
+        }
+        
         $tipo = GrupoAcesso::checarTipo($acesso);
         
         foreach ($this->acessos as $v) {
