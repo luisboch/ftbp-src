@@ -23,7 +23,7 @@ class UsuarioDAO extends DAOBasico {
      * @throws Exception
      */
     public function executarInsert(Entidade $entidade) {
-
+        /* @var $entidade Usuario */
         $sql = "INSERT 
                  INTO usuarios(
                       nome,
@@ -31,8 +31,9 @@ class UsuarioDAO extends DAOBasico {
                       senha,
                       departamento_id,
                       responsavel,
-                      tipo_usuario)
-               VALUES ($1, $2, $3, $4, " . ( $entidade->getResponsavel() ? 'true' : 'false') . ", $5)";
+                      tipo_usuario,
+                      grupo_id)
+               VALUES ($1, $2, $3, $4, " . ( $entidade->getResponsavel() ? 'true' : 'false') . ", $5, $6)";
 
 
         $p = $this->getConn()->prepare($sql);
@@ -48,6 +49,8 @@ class UsuarioDAO extends DAOBasico {
         }
 
         $p->setParameter(5, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
+        
+        $p->setParameter(6, $entidade->getGrupo()->getId(), PreparedStatement::INTEGER);
 
         $p->execute();
 
