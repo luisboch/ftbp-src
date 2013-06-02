@@ -89,7 +89,7 @@ abstract class ServicoBasico implements EntidadeServico {
 
 
         $this->antesDeInserir($entidade);
-        
+
         try {
 
             if ($autoCommit) {
@@ -133,7 +133,7 @@ abstract class ServicoBasico implements EntidadeServico {
      * na tabela de pesquisa.
      * @param Entidade $entidade
      */
-    public function atualizar(Entidade $entidade, $autoCommit = true) {
+    public function atualizar(Entidade $entidade, $autoCommit = true, $automatico = true) {
 
         $this->checarAcesso();
 
@@ -153,14 +153,18 @@ abstract class ServicoBasico implements EntidadeServico {
             // Executa o update na entidade
             $this->dao->executarUpdate($entidade);
 
-            // Checa se é notificável e salva as notificações caso for
-            if ($entidade instanceof Notificavel) {
-                $this->salvarNotificacoes($entidade);
-            }
+            // Se for update automático não notifica a alteração.
+            if ($automatico) {
+             
+                // Checa se é notificável e salva as notificações caso for
+                if ($entidade instanceof Notificavel) {
+                    $this->salvarNotificacoes($entidade);
+                }
 
-            // Checa se é Pesquisável e salva na tabela de pesquisa.
-            if ($entidade instanceof Pesquisavel) {
-                $this->atualizarPesquisa($entidade);
+                // Checa se é Pesquisável e salva na tabela de pesquisa.
+                if ($entidade instanceof Pesquisavel) {
+                    $this->atualizarPesquisa($entidade);
+                }
             }
 
             if ($autoCommit) {
@@ -250,13 +254,13 @@ abstract class ServicoBasico implements EntidadeServico {
      * É chamado antes de uma atualização, com o novo objeto e com o antigo.
      */
     private function antesDeAtualizar($novo, $velho) {
-        foreach($this->listeners as $k => $v){
+        foreach ($this->listeners as $k => $v) {
             $v->antesDeAtualizar($novo, $velho);
         }
     }
 
     private function antesDeInserir($new) {
-        foreach($this->listeners as $k => $v){
+        foreach ($this->listeners as $k => $v) {
             $v->antesDoSalvar($novo);
         }
     }
@@ -264,6 +268,7 @@ abstract class ServicoBasico implements EntidadeServico {
     public function adicionarListener(ServicoAcao $listener) {
         $this->listeners[] = $listener;
     }
+
 }
 
 ?>

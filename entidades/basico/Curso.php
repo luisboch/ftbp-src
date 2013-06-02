@@ -113,6 +113,8 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
      * @var CursoArquivo[]
      */
     private $arquivos = array();
+    
+    private $acessos = 0;
 
     public function getDescricao() {
         return $this->descricao;
@@ -253,7 +255,7 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
     public function getDataCriacao() {
         return $this->dataCriacao;
     }
-
+    
     /**
      * @param DateTime $dataCriacao
      */
@@ -356,6 +358,22 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
         $this->arquivos = $arquivos;
     }
 
+    /**
+     * 
+     * @return int
+     */
+    public function getAcessos() {
+        return $this->acessos;
+    }
+
+    /**
+     * 
+     * @param int $acessos
+     */
+    public function setAcessos($acessos) {
+        $this->acessos = $acessos;
+    }
+    
     public function adicionarArquivo(CursoArquivo $arq) {
         // Confirma que os arquivos já foram carregados.
         $this->getArquivos();

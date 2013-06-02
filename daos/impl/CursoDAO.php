@@ -77,7 +77,7 @@ class CursoDAO extends DAOBasico {
                     SET nome=$1, descricao=$2, data_vestibular=$3, coordenador=$4, 
                     email=$5, corpo_docente=$6, publico_alvo=$7, valor=$8, duracao=$9, 
                     videoapres=$10, areacurso_id=$11, nivelgraduacao=$12, contatosecretaria=$13, 
-                    credito=$15
+                    credito=$15, acessos = $16
                 WHERE id=$14";
         $p = $this->getConn()->prepare($sql);
 
@@ -108,6 +108,7 @@ class CursoDAO extends DAOBasico {
         $p->setParameter(13, $entidade->getContatoSecretaria(), PreparedStatement::STRING);
         $p->setParameter(14, $entidade->getId(), PreparedStatement::INTEGER);
         $p->setParameter(15, $entidade->getCredito(), PreparedStatement::INTEGER);
+        $p->setParameter(16, $entidade->getAcessos(), PreparedStatement::INTEGER);
         $p->execute();
 
         $this->inserirUploads($entidade);
@@ -176,7 +177,7 @@ class CursoDAO extends DAOBasico {
     public function getById($id) {
         $sql = "select c.id, c.data_criacao, c.nome, c.descricao, data_vestibular, coordenador, email, corpo_docente, 
                        publico_alvo, valor, duracao, videoapres, areacurso_id, nivelgraduacao, 
-                       contatosecretaria, excluida, credito,
+                       contatosecretaria, excluida, credito, acessos,
                        ac.nome as ac_nome,
                        ac.data_criacao as ac_data_criacao
                   from curso c
@@ -231,6 +232,7 @@ class CursoDAO extends DAOBasico {
         $cr->setVideoApresentacao($arr['videoapres']);
         $cr->setEmail($arr['email']);
         $cr->setCredito($arr['credito']);
+        $cr->setAcessos($arr['acessos']);
         return $cr;
     }
 
@@ -331,7 +333,7 @@ class CursoDAO extends DAOBasico {
 
         $curso->setArquivos($list);
     }
-
+    
 }
 
 ?>
