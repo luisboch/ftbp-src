@@ -26,7 +26,7 @@ class ServicoCurso extends ServicoBasico {
 
     public function validar(Entidade $entidade) {
         $v = new ValidacaoExecao();
-
+        /* @var $entidade Curso */
         // Check defaults
         if ($this->stado == self::CRIACAO) {
             $entidade->setDataCriacao(new DateTime());
@@ -41,6 +41,10 @@ class ServicoCurso extends ServicoBasico {
             $v->addError('Duração inválido "' . $entidade->getDuracao(). '", é aceito apenas número!', 'duracao');
         }
 
+        if($entidade->getCredito() == ''){
+            $v->addError('Crédito Inválido!', 'credito');
+        }
+        
         foreach ($entidade->getArquivos() as $a) {
 
             if ($a->getUsuario() == null) {
