@@ -3,6 +3,7 @@
 require_once 'ftbp-src/servicos/Servico.php';
 require_once 'ftbp-src/servicos/impl/ServicoBasico.php';
 require_once 'ftbp-src/daos/impl/UsuarioDAO.php';
+require_once 'ftbp-src/servicos/util/StringUtil.php';
 /*
  * ServicoUsuario.php
  */
@@ -39,7 +40,7 @@ class ServicoUsuario extends ServicoBasico {
     public function validarUsuario(Usuario $usuario) {
         $v = new ValidacaoExecao();
 
-        if ($usuario->getEmail() == null) {
+        if ($usuario->getEmail() == null|| !StringUtil::checkEmail($usuario->getEmail())) {
             $v->addError("Email do usuário inválido", "email");
         }
 
