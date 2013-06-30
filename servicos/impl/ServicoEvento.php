@@ -26,6 +26,11 @@ class ServicoEvento extends ServicoBasico{
     }
 
     public function validar(Entidade $entidade) {
+        /* @var $entidade Evento */
+        if($entidade->getDataCriacao() == null && $this->stado == self::CRIACAO){
+            $entidade->setDataCriacao(new DateTime());
+        }
+        
         $v = new ValidacaoExecao();
         
         if($entidade->getTitulo() == ''){
