@@ -40,10 +40,6 @@ class ServicoCurso extends ServicoBasico {
         if ($entidade->getDuracao() == null || !is_numeric($entidade->getDuracao())) {
             $v->addError('Duração inválido "' . $entidade->getDuracao(). '", é aceito apenas número!', 'duracao');
         }
-
-        if($entidade->getCredito() == ''){
-            $v->addError('Crédito Inválido!', 'credito');
-        }
         
         foreach ($entidade->getArquivos() as $a) {
 
