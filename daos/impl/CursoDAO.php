@@ -66,10 +66,11 @@ class CursoDAO extends DAOBasico {
 
         $p->execute();
         
+        $entidade->setId($id);
+        
         // Se possui uploads salva
         $this->inserirUploads($entidade);
         
-        $entidade->setId($id);
     }
 
     public function executarUpdate(Entidade $entidade) {
