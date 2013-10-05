@@ -69,16 +69,9 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
 
     /**
      *
-     * @var email
+     * @var Usuario
      */
-    private $email;
-
-    /**
-     *
-     * @var String
-     */
-    private $contatoSecretaria;
-
+    private $contato;
     /**
      *
      * @var Date
@@ -93,7 +86,7 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
 
     /**
      *
-     * @return String
+     * @return Usuario
      */
     private $coordenador;
 
@@ -102,12 +95,6 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
      * @return boolean
      */
     private $excluida;
-
-    /**
-     *
-     * @return Int
-     */
-    private $credito;
 
     /**
      * @var CursoArquivo[]
@@ -124,10 +111,18 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
         $this->descricao = $descricao;
     }
 
+    /**
+     * 
+     * @return Usuario
+     */
     public function getCoordenador() {
         return $this->coordenador;
     }
 
+    /**
+     * 
+     * @param Usuario $coordenador
+     */
     public function setCoordenador($coordenador) {
         $this->coordenador = $coordenador;
     }
@@ -140,14 +135,6 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
         $this->excluida = $excluida;
     }
 
-    public function getCredito() {
-        return $this->credito;
-    }
-
-    public function setCredito($credito) {
-        $this->credito = $credito;
-    }
-
     public function getNome() {
         return $this->nome;
     }
@@ -155,7 +142,19 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
     public function setNome($nome) {
         $this->nome = $nome;
     }
+    
+    public function getContato() {
+        return $this->contato;
+    }
 
+    /**
+     * 
+     * @param Usuario $contato
+     */
+    public function setContato( $contato) {
+        $this->contato = $contato;
+    }
+    
     public function getCorpoDocente() {
         return $this->corpoDocente;
     }
@@ -210,22 +209,6 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
 
     public function setNivelGraduacao($nivelGraduacao) {
         $this->nivelGraduacao = $nivelGraduacao;
-    }
-
-    public function getEmail() {
-        return $this->email;
-    }
-
-    public function setEmail($email) {
-        $this->email = $email;
-    }
-
-    public function getContatoSecretaria() {
-        return $this->contatoSecretaria;
-    }
-
-    public function setContatoSecretaria($contatoSecretaria) {
-        $this->contatoSecretaria = $contatoSecretaria;
     }
 
     public function getId() {
@@ -324,14 +307,6 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
             }
         }
 
-        $emails = explode(', ', $this->email);
-
-        foreach ($emails as $v) {
-            if ($v != '') {
-                $palavras[] = $v;
-            }
-        }
-
         return $palavras;
     }
 
@@ -392,7 +367,7 @@ class Curso implements Entidade, Notificavel, Pesquisavel {
             }
         }
     }
-
+    
 }
 
 ?>

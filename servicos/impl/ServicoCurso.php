@@ -34,22 +34,23 @@ class ServicoCurso extends ServicoBasico {
 
 
         if ($entidade->getNome() == '') {
-            $v->addError('nome curso inválido ->  curso ' . $entidade->getNome(), 'curso');
+            $v->addError('Nome do curso inválido ->  nome: ' . $entidade->getNome(), 'nome');
         }
 
         if ($entidade->getDuracao() == null || !is_numeric($entidade->getDuracao())) {
             $v->addError('Duração inválido "' . $entidade->getDuracao(). '", é aceito apenas número!', 'duracao');
         }
         
+        $session = SessionManager::getInstance();
         foreach ($entidade->getArquivos() as $a) {
 
             if ($a->getUsuario() == null) {
-                $a->setUsuario(SessionManager::getInstance()->getUsuario());
-                $a->setSetor(SessionManager::getInstance()->getUsuario()->getDepartamento());
+                $a->setUsuario($session->getUsuario());
+                $a->setSetor($session->getUsuario()->getDepartamento());
             }
 
             if ($a->getSetor() == null) {
-                if (SessionManager::getInstance()->getUsuario()->getDepartamento() == null) {
+                if ($session->getUsuario()->getDepartamento() == null) {
                     $v->addError("Você não possui um setor associado para efetuar upload");
                 }
             }
