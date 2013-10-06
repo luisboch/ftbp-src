@@ -3,12 +3,30 @@
 require_once 'ftbp-src/daos/EntidadeDAO.php';
 require_once 'ftbp-src/entidades/basico/Evento.php';
 require_once 'ftbp-src/daos/impl/DAOUtil.php';
+require_once 'ftbp-src/daos/impl/UsuarioDAO.php';
 require_once 'DAOBasico.php';
 
 class EventoDAO extends DAOBasico {
+    /**
+     *
+     * @var UsuarioDAO
+     */
+    private $usuarioDAO;
+    
+    function __construct() {
+        parent::__construct();
+        $this->usuarioDAO = new UsuarioDAO();
+    }
 
+    
+    public function connect() {
+        parent::connect();
+        $this->usuarioDAO->connect();
+    }
+    
     public function executarInsert(Entidade $entidade) {
 
+        /* @var $entidade Evento */
         $sql = "select nextval('evento_id_seq') as id";
 
         $rs = $this->getConn()->query($sql);
@@ -20,7 +38,7 @@ class EventoDAO extends DAOBasico {
         $id = $arr['id'];
 
         $sql = "INSERT INTO evento(
-                            id, titulo, descricao, data, local, contato, excluida, data_criacao)
+                            id, titulo, descricao, data, local, contato_id, excluida, data_criacao)
                     VALUES ($1,$2, $3, $4, $5, $6, false,now())";
 
         $p = $this->getConn()->prepare($sql);
@@ -30,7 +48,12 @@ class EventoDAO extends DAOBasico {
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
         $p->setParameter(4, DAOUtil::toDataBaseTime($entidade->getDataEvento()), PreparedStatement::STRING);
         $p->setParameter(5, $entidade->getLocal(), PreparedStatement::STRING);
-        $p->setParameter(6, $entidade->getContato(), PreparedStatement::STRING);
+        
+        if ($entidade->getContato() == null) {
+            $p->setParameter(6, NULL, PreparedStatement::INTEGER);
+        } else {
+            $p->setParameter(6, $entidade->getContato()->getId(), PreparedStatement::INTEGER);
+        }
 
         $p->execute();
 
@@ -41,7 +64,7 @@ class EventoDAO extends DAOBasico {
 
         $sql = " update evento
                     set titulo=$2, descricao=$3, data=$4, local=$5, 
-                        contato=$6
+                        contato_id=$6
                     where id=$1";
 
         $p = $this->getConn()->prepare($sql);
@@ -51,18 +74,23 @@ class EventoDAO extends DAOBasico {
         $p->setParameter(3, $entidade->getDescricao(), PreparedStatement::STRING);
         $p->setParameter(4, DAOUtil::toDataBaseTime($entidade->getDataEvento()), PreparedStatement::STRING);
         $p->setParameter(5, $entidade->getLocal(), PreparedStatement::STRING);
-        $p->setParameter(6, $entidade->getContato(), PreparedStatement::STRING);
+        
+        if ($entidade->getContato() == null) {
+            $p->setParameter(6, NULL, PreparedStatement::INTEGER);
+        } else {
+            $p->setParameter(6, $entidade->getContato()->getId(), PreparedStatement::INTEGER);
+        }
+
 
         $p->execute();
     }
 
     public function executarDelete(Entidade $entidade) {
-
         throw new Exception("Not implemented yet!");
     }
 
     public function getById($id) {
-        $sql = "select id, titulo, descricao, data, local, contato, excluida, data_criacao
+        $sql = "select id, titulo, descricao, data, local, contato_id, excluida, data_criacao
                   from evento where id = $1
               order by data desc";
 
@@ -91,7 +119,12 @@ class EventoDAO extends DAOBasico {
         $ev->setDescricao($arr['descricao']);
         $ev->setDataEvento(DAOUtil::toDateTime($arr['data']));
         $ev->setLocal($arr['local']);
-        $ev->setContato($arr['contato']);
+        
+        if($arr['contato_id'] != ''){
+            $contato = $this->usuarioDAO->getById($arr['contato_id']);
+            $ev->setContato($contato);
+        }
+        
         $ev->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
 
         return $ev;
@@ -103,7 +136,8 @@ class EventoDAO extends DAOBasico {
      */
     public function carregarEvento($limite = null) {
 
-        $sql = "select id, titulo, data_criacao, descricao, data, local, contato, excluida
+        $sql = "select id, titulo, data_criacao, descricao, data, local,
+                       contato_id, excluida
                   from evento
               order by data desc";
         if ($limite !== null) {
@@ -132,4 +166,5 @@ class EventoDAO extends DAOBasico {
     }
 
 }
+
 ?>

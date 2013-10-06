@@ -50,7 +50,7 @@ class Evento implements Entidade, Notificavel, Pesquisavel{
     
     /**
      *
-     * @return String 
+     * @return Usuario 
      */
     
     private $contato;
@@ -77,11 +77,19 @@ class Evento implements Entidade, Notificavel, Pesquisavel{
         $this->local = $local;
     }
 
+    /**
+     * 
+     * @return Usuario
+     */
     public function getContato() {
         return $this->contato;
     }
 
-    public function setContato($contato) {
+    /**
+     * 
+     * @param Usuario $contato
+     */
+    public function setContato( $contato) {
         $this->contato = $contato;
     }
     
