@@ -53,7 +53,7 @@ class ServicoUsuario extends ServicoBasico {
             $v->addError("Senha do usuário inválida", "senha");
         }
         
-        if ($usuario->getDepartamento() == null && $usuario->getTipoUsuario() == TipoUsuario::FUNCIONARIO) {
+        if ($usuario->getDepartamento() == null) {
             $v->addError("Departamento do usuário inválido", "senha");
         }
 
