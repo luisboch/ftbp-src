@@ -31,9 +31,8 @@ class UsuarioDAO extends DAOBasico {
                       senha,
                       departamento_id,
                       responsavel,
-                      tipo_usuario,
                       grupo_id)
-               VALUES ($1, $2, $3, $4, " . ( $entidade->getResponsavel() ? 'true' : 'false') . ", $5, $6)";
+               VALUES ($1, $2, $3, $4, " . ( $entidade->getResponsavel() ? 'true' : 'false') . ", $5)";
 
 
         $p = $this->getConn()->prepare($sql);
@@ -47,10 +46,8 @@ class UsuarioDAO extends DAOBasico {
         } else {
             $p->setParameter(4, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
         }
-
-        $p->setParameter(5, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
         
-        $p->setParameter(6, $entidade->getGrupo()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getGrupo()->getId(), PreparedStatement::INTEGER);
 
         $p->execute();
 
@@ -69,12 +66,11 @@ class UsuarioDAO extends DAOBasico {
                        email           = $2,
                        departamento_id = $3,
                        responsavel     = " . ( $entidade->getResponsavel() ? 'true' : 'false') . ",
-                       tipo_usuario    = $4,
-                       grupo_id        = $5";
+                       grupo_id        = $4";
         if ($entidade->getSenha() != '') {
-            $sql .= ",senha           = $7 ";
+            $sql .= ",senha           = $6 ";
         }
-        $sql .= "WHERE id = $6";
+        $sql .= "WHERE id = $5";
 
         $p = $this->getConn()->prepare($sql);
 
@@ -86,14 +82,13 @@ class UsuarioDAO extends DAOBasico {
         } else {
             $p->setParameter(3, $entidade->getDepartamento()->getId(), PreparedStatement::INTEGER);
         }
-        $p->setParameter(4, $entidade->getTipoUsuario(), PreparedStatement::INTEGER);
 
-        $p->setParameter(5, $entidade->getGrupo()->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(4, $entidade->getGrupo()->getId(), PreparedStatement::INTEGER);
         
-        $p->setParameter(6, $entidade->getId(), PreparedStatement::INTEGER);
+        $p->setParameter(5, $entidade->getId(), PreparedStatement::INTEGER);
 
         if ($entidade->getSenha() != '') {
-            $p->setParameter(7, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
+            $p->setParameter(6, hash("sha512", $entidade->getSenha()), PreparedStatement::STRING);
         }
 
         $p->execute();
@@ -101,7 +96,7 @@ class UsuarioDAO extends DAOBasico {
 
     public function executarDelete(Entidade $entidade) {
         $sql = " delete from      
-                      usuarios where id=$1";
+                        usuarios where id=$1";
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->execute();
@@ -164,7 +159,6 @@ class UsuarioDAO extends DAOBasico {
         $u->setId($arr['id']);
         $u->setDataCriacao(DAOUtil::toDateTime($arr['data_criacao']));
         $u->setResponsavel($arr['responsavel'] === 't');
-        $u->setTipoUsuario($arr['tipo_usuario']);
         $u->setDepartamentoId($arr['departamento_id']);
         $u->setGrupoId($arr['grupo_id']);
 
@@ -256,9 +250,11 @@ class UsuarioDAO extends DAOBasico {
 
         if (isset($ids) && is_array($ids) && count($ids) > 0) {
 
-            $sql = "select *  
-                 from usuarios
-                where responsavel = true and departamento_id in (" . DAOUtil::listToString($ids) . ")";
+            $sql = "
+                select *  
+                  from usuarios
+                 where responsavel = true 
+                   and departamento_id in (" . DAOUtil::listToString($ids) . ")";
 
             $rs = $this->getConn()->query($sql);
 
@@ -271,13 +267,9 @@ class UsuarioDAO extends DAOBasico {
     }
 
     public function carregarTodosOsUsuarios() {
-
         $list = array();
-
-
         $sql = "select *  
-                 from usuarios";
-
+                  from usuarios";
         $rs = $this->getConn()->query($sql);
 
         while ($rs->next()) {
@@ -293,8 +285,8 @@ class UsuarioDAO extends DAOBasico {
         if (isset($dep) && is_array($dep) && count($dep) > 0) {
 
             $sql = "select *  
-                 from usuarios
-                 where departamento_id in (" . DAOUtil::listToString($dep) . ")";
+                      from usuarios
+                     where departamento_id in (" . DAOUtil::listToString($dep) . ")";
 
             $rs = $this->getConn()->query($sql);
 
@@ -310,8 +302,8 @@ class UsuarioDAO extends DAOBasico {
         if ($grupoId != '') {
             // Monta a query
             $sql = "select id, nome, data_criacao
-                  from grupos
-                 where id = $1";
+                      from grupos
+                     where id = $1";
             $p = $this->getConn()->prepare($sql);
 
             // Seta os parâmetros
@@ -336,5 +328,3 @@ class UsuarioDAO extends DAOBasico {
     }
 
 }
-
-?>

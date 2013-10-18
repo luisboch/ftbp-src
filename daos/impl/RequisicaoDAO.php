@@ -28,7 +28,7 @@ class RequisicaoDAO extends DAOBasico {
     public function executarDelete(Entidade $entidade) {
 
         // Primeiro exclui todas as iterações.
-        $sql = "delete from requisicoes_iteracoes where requisicao_id = $1";
+        $sql = "delete from requisicoes_interacoes where requisicao_id = $1";
         $p = $this->getConn()->prepare($sql);
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
         $p->execute();
@@ -94,7 +94,7 @@ class RequisicaoDAO extends DAOBasico {
         }
 
         // Primeiro exclui todas as iterações.
-        $sql1 = "delete from requisicoes_iteracoes where requisicao_id = $1";
+        $sql1 = "delete from requisicoes_interacoes where requisicao_id = $1";
         
         $p = $this->getConn()->prepare($sql1);
         $p->setParameter(1, $entidade->getId(), PreparedStatement::INTEGER);
@@ -132,12 +132,12 @@ class RequisicaoDAO extends DAOBasico {
         
         // Insere todas as iterações novamente
         $sql3 = "insert 
-                  into requisicoes_iteracoes(
-                       requisicao_id, 
-                       usuario_id, 
-                       mensagem,
-                       data_criacao)
-                values ($1, $2, $3, $4)";
+                   into requisicoes_interacoes(
+                        requisicao_id, 
+                        usuario_id, 
+                        mensagem,
+                        data_criacao)
+                 values ($1, $2, $3, $4)";
         
         $p = $this->getConn()->prepare($sql3);
         
@@ -269,7 +269,7 @@ class RequisicaoDAO extends DAOBasico {
                        ri.mensagem, 
                        ri.data_criacao as it_criacao,
                        u.* 
-                  from requisicoes_iteracoes ri 
+                  from requisicoes_interacoes ri 
                   join usuarios u on (ri.usuario_id = u.id)
                  where requisicao_id = $1
               order by ri.data_criacao ";

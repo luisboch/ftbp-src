@@ -1,7 +1,6 @@
 <?php
 require_once 'ftbp-src/entidades/Entidade.php';
 require_once 'ftbp-src/entidades/Pesquisavel.php';
-require_once 'ftbp-src/entidades/basico/TipoUsuario.php';
 require_once 'ftbp-src/entidades/basico/Departamento.php';
 require_once 'ftbp-src/entidades/basico/Grupo.php';
 
@@ -33,7 +32,7 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
     private $senha;
 
     /**
-     * @var List<Notificavel>
+     * @var Notificavel[]
      */
     private $notificacoes;
     
@@ -52,11 +51,6 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
      */
     private $responsavel = false;
     
-    /**
-     *
-     * @var integer
-     */
-    private $tipoUsuario;
     
     /**
      *
@@ -120,14 +114,14 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
     }
     
     /**
-     * @return List<Notificacoes>
+     * @return Notificacoes[]
      */
     public function getNotificacoes() {
         return $this->notificacoes;
     }
     
     /**
-     * @param List<Notificacoes> $notificacoes
+     * @param Notificacoes[] $notificacoes
      */
     public function setNotificacoes($notificacoes) {
         $this->notificacoes = $notificacoes;
@@ -221,19 +215,6 @@ class Usuario implements Entidade, Pesquisavel, Notificavel{
         $this->responsavel = $responsavel;
     }
     
-    /**
-     * @return integer
-     */
-    public function getTipoUsuario() {
-        return $this->tipoUsuario;
-    }
-    /**
-     * 
-     * @param integer $tipoUsuario
-     */
-    public function setTipoUsuario($tipoUsuario) {
-        $this->tipoUsuario = $tipoUsuario;
-    }
     /**
      * 
      * @return Usuario
